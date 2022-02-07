@@ -4,19 +4,22 @@ const Header = ({ course }) => {
   return <h1>{course}</h1>;
 };
 
+const Part = ({ title, exercises }) => {
+  return (
+    <p>
+      {' '}
+      {title} {exercises}
+    </p>
+  );
+};
+
 const Content = ({ content }) => {
   return (
     <>
       {' '}
-      <p>
-        {content.part1.title} {content.part1.exercises}
-      </p>
-      <p>
-        {content.part2.title} {content.part2.exercises}
-      </p>
-      <p>
-        {content.part3.title} {content.part3.exercises}
-      </p>
+      <Part title={content.part1.title} exercises={content.part1.exercises} />
+      <Part title={content.part2.title} exercises={content.part2.exercises} />
+      <Part title={content.part3.title} exercises={content.part3.exercises} />
     </>
   );
 };
