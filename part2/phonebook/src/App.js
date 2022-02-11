@@ -10,8 +10,14 @@ const App = () => {
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    setPersons([...persons, { name: newName }]);
-    setNewName('');
+    const doesExist =
+      persons.filter((person) => person.name === newName).length > 0;
+    if (!doesExist) {
+      setPersons([...persons, { name: newName }]);
+      setNewName('');
+    } else {
+      window.alert(`Name: ${newName} already exists in the phonebook!`);
+    }
   };
 
   const renderPersons = () => {
