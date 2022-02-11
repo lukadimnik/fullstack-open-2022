@@ -26,12 +26,20 @@ const App = () => {
     setVotesArr(copyArr);
   };
 
+  const mostVotes = () => {
+    const maxVotes = Math.max(...votesArr);
+    return anecdotes[votesArr.indexOf(maxVotes)];
+  };
+
   return (
     <div>
       {anecdotes[selected]}
       <br />
+      <p>Has {votesArr[selected]} number of votes</p>
       <button onClick={randomQuoteSelector}>Next Quote</button>
       <button onClick={vote}>Vote</button>
+      <br />
+      {votesArr.reduce((prev, cur) => prev + cur) ? <p>{mostVotes()}</p> : null}
     </div>
   );
 };
