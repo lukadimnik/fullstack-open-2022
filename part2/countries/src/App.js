@@ -34,11 +34,15 @@ function App() {
           <p>Capital: {displayCountry.capital[0]}</p>
           <p>Area: {displayCountry.area}</p>
           <h3>Languages</h3>
-          <ul>
-            {Object.values(displayCountry.languages).map((lang, i) => (
-              <li key={i}>{lang}</li>
-            ))}
-          </ul>
+          <table>
+            <tbody>
+              {Object.values(displayCountry.languages).map((lang, i) => (
+                <tr>
+                  <td key={i}>{lang}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
           <img
             className='flag'
             src={displayCountry.flags.png}
@@ -48,11 +52,20 @@ function App() {
       );
     } else if (filteredCountries.length < 10) {
       return (
-        <ul>
-          {filteredCountries.map((country, i) => (
-            <li key={i}>{country.name.common}</li>
-          ))}
-        </ul>
+        <table>
+          <tbody>
+            {filteredCountries.map((country, i) => (
+              <tr key={i}>
+                <td>{country.name.common}</td>
+                <td>
+                  <button onClick={() => setSearch(country.name.common)}>
+                    Show
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       );
     }
     return <p>Too many matches, specify another filter</p>;
