@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import './app.css';
+import Weather from './components/Weather';
 
 function App() {
   const [countries, setCountries] = useState([]);
@@ -8,7 +9,6 @@ function App() {
 
   const fetchCountries = async () => {
     const response = await axios('https://restcountries.com/v3.1/all');
-    console.log('response', response);
     setCountries(response.data);
   };
 
@@ -37,8 +37,8 @@ function App() {
           <table>
             <tbody>
               {Object.values(displayCountry.languages).map((lang, i) => (
-                <tr>
-                  <td key={i}>{lang}</td>
+                <tr key={i}>
+                  <td>{lang}</td>
                 </tr>
               ))}
             </tbody>
@@ -48,6 +48,7 @@ function App() {
             src={displayCountry.flags.png}
             alt='country flag'
           />
+          <Weather displayCountry={displayCountry} />
         </div>
       );
     } else if (filteredCountries.length < 10) {
