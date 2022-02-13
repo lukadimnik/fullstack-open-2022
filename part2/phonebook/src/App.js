@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
+import Notification from './components/Notification';
 import { getAll, create, deleteEntry, update } from './personService';
+import './index.css';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [phoneNumber, setphoneNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [notification, setNotification] = useState({});
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -22,6 +25,11 @@ const App = () => {
     setFilter(event.target.value);
   };
 
+  const notify = (notificationObject) => {
+    setNotification(notificationObject);
+    setTimeout(() => setNotification({}), 4000);
+  };
+
   const handleFormSubmit = (event) => {
     event.preventDefault();
     const doesExist =
@@ -31,9 +39,22 @@ const App = () => {
         ...persons,
         { name: newName, number: phoneNumber, id: persons.length + 1 },
       ]);
-      create({ name: newName, number: phoneNumber });
-      setNewName('');
-      setphoneNumber('');
+
+      create({ name: newName, number: phoneNumber })
+        .then((res) => {
+          notify({
+            message: `${newName} was added!`,
+            type: 'notification',
+          });
+          setNewName('');
+          setphoneNumber('');
+        })
+        .catch((err) => {
+          notify({
+            message: 'Failed to create new phonebook entry!',
+            type: 'error',
+          });
+        });
     } else {
       const shouldUpdate = window.confirm(
         `Name: ${newName} already exists in the phonebook. Do you want to update the number?`
@@ -42,16 +63,27 @@ const App = () => {
         const personToUpdate = persons.find(
           (person) => person.name === newName
         );
-        update(personToUpdate.id, { name: newName, number: phoneNumber });
-        const filteredArr = persons.filter(
-          (person) => person.id !== personToUpdate.id
-        );
+        update(personToUpdate.id, { name: newName, number: phoneNumber })
+          .then((res) => {
+            const filteredArr = persons.filter(
+              (person) => person.id !== personToUpdate.id
+            );
 
-        setPersons([
-          ...filteredArr,
-          { name: newName, number: phoneNumber, id: personToUpdate.id },
-        ]);
-        console.log('updatedArr', filteredArr);
+            setPersons([
+              ...filteredArr,
+              { name: newName, number: phoneNumber, id: personToUpdate.id },
+            ]);
+            notify({
+              message: `${newName} was successfully updated!`,
+              type: 'notification',
+            });
+          })
+          .catch((err) =>
+            notify({
+              message: 'Failed to update phonebook entry!',
+              type: 'error',
+            })
+          );
       }
     }
   };
@@ -74,6 +106,9 @@ const App = () => {
 
   return (
     <div>
+      {Boolean(Object.keys(notification).length) && (
+        <Notification notification={notification} />
+      )}
       <h2>Phonebook</h2>
       <Filter filter={filter} onFilterChange={handleFilterChange} />
       <h2>Add a New Entry</h2>
