@@ -78,12 +78,20 @@ const App = () => {
               type: 'notification',
             });
           })
-          .catch((err) =>
-            notify({
-              message: 'Failed to update phonebook entry!',
-              type: 'error',
-            })
-          );
+          .catch((err) => {
+            console.log(err.response);
+            if (err.response.status === 404) {
+              notify({
+                message: `${newName} has already been deleted from the server!`,
+                type: 'error',
+              });
+            } else {
+              notify({
+                message: 'Failed to update phonebook entry!',
+                type: 'error',
+              });
+            }
+          });
       }
     }
   };
