@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
-import { getAll, create, deleteEntry } from './personService';
+import { getAll, create, deleteEntry, update } from './personService';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -35,7 +35,24 @@ const App = () => {
       setNewName('');
       setphoneNumber('');
     } else {
-      window.alert(`Name: ${newName} already exists in the phonebook!`);
+      const shouldUpdate = window.confirm(
+        `Name: ${newName} already exists in the phonebook. Do you want to update the number?`
+      );
+      if (shouldUpdate) {
+        const personToUpdate = persons.find(
+          (person) => person.name === newName
+        );
+        update(personToUpdate.id, { name: newName, number: phoneNumber });
+        const filteredArr = persons.filter(
+          (person) => person.id !== personToUpdate.id
+        );
+
+        setPersons([
+          ...filteredArr,
+          { name: newName, number: phoneNumber, id: personToUpdate.id },
+        ]);
+        console.log('updatedArr', filteredArr);
+      }
     }
   };
 
