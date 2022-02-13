@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
-import axios from 'axios';
+import { getAll, create, update } from './personService';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -28,6 +28,7 @@ const App = () => {
       persons.filter((person) => person.name === newName).length > 0;
     if (!doesExist) {
       setPersons([...persons, { name: newName, number: phoneNumber }]);
+      create({ name: newName, number: phoneNumber });
       setNewName('');
       setphoneNumber('');
     } else {
@@ -36,7 +37,7 @@ const App = () => {
   };
 
   const fetchPersons = async () => {
-    const response = await axios('http://localhost:3001/persons');
+    const response = await getAll();
     setPersons(response.data);
     console.log('response', response);
   };
