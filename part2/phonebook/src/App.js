@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import Filter from './components/Filter';
-import { getAll, create, update } from './personService';
+import { getAll, create, deleteEntry } from './personService';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -27,7 +27,10 @@ const App = () => {
     const doesExist =
       persons.filter((person) => person.name === newName).length > 0;
     if (!doesExist) {
-      setPersons([...persons, { name: newName, number: phoneNumber }]);
+      setPersons([
+        ...persons,
+        { name: newName, number: phoneNumber, id: persons.length + 1 },
+      ]);
       create({ name: newName, number: phoneNumber });
       setNewName('');
       setphoneNumber('');
@@ -40,6 +43,12 @@ const App = () => {
     const response = await getAll();
     setPersons(response.data);
     console.log('response', response);
+  };
+
+  const handleButtonDelete = (id) => {
+    deleteEntry(id);
+    const newPersonsArr = persons.filter((person) => person.id !== id);
+    setPersons([...newPersonsArr]);
   };
 
   useEffect(() => {
@@ -59,7 +68,11 @@ const App = () => {
         onNumberChange={handlePhoneNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons filter={filter} persons={persons} />
+      <Persons
+        filter={filter}
+        persons={persons}
+        onButtonDelete={handleButtonDelete}
+      />
     </div>
   );
 };
