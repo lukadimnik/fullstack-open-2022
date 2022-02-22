@@ -35,13 +35,9 @@ const App = () => {
     const doesExist =
       persons.filter((person) => person.name === newName).length > 0;
     if (!doesExist) {
-      setPersons([
-        ...persons,
-        { name: newName, number: phoneNumber, id: persons.length + 1 },
-      ]);
-
       create({ name: newName, number: phoneNumber })
         .then((res) => {
+          setPersons([...persons, { ...res.data }]);
           notify({
             message: `${newName} was added!`,
             type: 'notification',
