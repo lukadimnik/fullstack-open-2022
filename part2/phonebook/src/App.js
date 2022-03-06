@@ -47,7 +47,9 @@ const App = () => {
         })
         .catch((err) => {
           notify({
-            message: 'Failed to create new phonebook entry!',
+            message:
+              err.response.data.error ||
+              'Failed to create new phonebook entry!',
             type: 'error',
           });
         });
@@ -83,7 +85,9 @@ const App = () => {
               });
             } else {
               notify({
-                message: 'Failed to update phonebook entry!',
+                message:
+                  err.response.data.error ||
+                  'Failed to update phonebook entry!',
                 type: 'error',
               });
             }
