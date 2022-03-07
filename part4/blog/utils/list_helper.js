@@ -3,4 +3,8 @@ const dummy = (blogs) => {
   return 1;
 };
 
-module.exports = { dummy };
+const totalLikes = (blogs) => {
+  return blogs.reduce((prev, cur) => cur.likes + prev, 0);
+};
+
+module.exports = { dummy, totalLikes };
