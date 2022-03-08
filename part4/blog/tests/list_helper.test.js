@@ -41,6 +41,13 @@ const blogs = [
     likes: 2,
     id: '622630a4c92ef1e01eaa26bb',
   },
+  {
+    title: 'Nekje na gorenjskem',
+    author: 'Francek Dolgouhec',
+    url: 'www.matkurja.si/gorenjska',
+    likes: 2,
+    id: '6225ff2907a94c03aef78979',
+  },
 ];
 
 const listOfOneBlog = [
@@ -61,7 +68,7 @@ describe('totalLikes', () => {
 
   test('when list has multiple blogs, equals correct likes', () => {
     const result = list_helper.totalLikes(blogs);
-    expect(result).toBe(19);
+    expect(result).toBe(21);
   });
 
   test('when list has no blogs, equals 0 likes', () => {
@@ -103,5 +110,17 @@ describe('favoriteBlog', () => {
       likes: 2,
       id: '6225ff2907a94c03aef78979',
     });
+  });
+});
+
+describe('mostBlogs', () => {
+  test('returns author with most blogs', () => {
+    const result = list_helper.mostBlogs(blogs);
+    expect(result).toEqual({ author: 'Kita Muhira', blogs: 4 });
+  });
+
+  test('if it receives only one blog it returns author with one blog', () => {
+    const result = list_helper.mostBlogs(listOfOneBlog);
+    expect(result).toEqual({ author: 'Francek Dolgouhec', blogs: 1 });
   });
 });

@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+const _ = require('lodash');
+
 const dummy = (blogs) => {
   return 1;
 };
@@ -20,4 +22,24 @@ const favoriteBlog = (blogs) => {
   return blogs.find((blog) => blog.likes === mostLikes);
 };
 
-module.exports = { dummy, totalLikes, favoriteBlog };
+const mostBlogs = (blogs) => {
+  const authors = _.uniq(blogs.map((blog) => blog.author)).map((author) => {
+    return { author, blogs: 0 };
+  });
+  const authorsWithBlogs = {};
+  authors.forEach((author) => (authorsWithBlogs[author.author] = 0));
+  blogs.forEach((blog) => (authorsWithBlogs[blog.author] += 1));
+  let authorWithMostBlogs = authors[0];
+  Object.keys(authorsWithBlogs).forEach((author) => {
+    if (authorsWithBlogs[author] > authorWithMostBlogs.blogs) {
+      return (authorWithMostBlogs = {
+        author,
+        blogs: authorsWithBlogs[author],
+      });
+    }
+  });
+
+  return authorWithMostBlogs;
+};
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs };
