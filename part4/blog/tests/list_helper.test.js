@@ -124,3 +124,15 @@ describe('mostBlogs', () => {
     expect(result).toEqual({ author: 'Francek Dolgouhec', blogs: 1 });
   });
 });
+
+describe('mostLikes', () => {
+  test('returns author with most likes', () => {
+    const result = list_helper.mostLikes(blogs);
+    expect(result).toEqual({ author: 'Kita Muhira', likes: 17 });
+  });
+
+  test('if it receives only one blog it returns author with correct likes', () => {
+    const result = list_helper.mostLikes(listOfOneBlog);
+    expect(result).toEqual({ author: 'Francek Dolgouhec', likes: 2 });
+  });
+});
