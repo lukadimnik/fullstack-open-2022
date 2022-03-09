@@ -29,6 +29,7 @@ const blogs = [
     id: '62261632911b32043039908b',
   },
   {
+    title: 'Sonce je sijalo',
     author: 'Kita Muhira',
     url: 'www.naganajasi.si/kobajagi',
     likes: 6,
@@ -81,6 +82,7 @@ describe('favoriteBlog', () => {
   test('correctly returns the blog with the most likes', () => {
     const result = list_helper.favoriteBlog(blogs);
     expect(result).toEqual({
+      title: 'Sonce je sijalo',
       author: 'Kita Muhira',
       url: 'www.naganajasi.si/kobajagi',
       likes: 6,
