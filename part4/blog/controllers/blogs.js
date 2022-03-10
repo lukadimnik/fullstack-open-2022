@@ -11,7 +11,11 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response, next) => {
   logger.info('creating a new blog');
   try {
-    const blog = new Blog(request.body);
+    const payload = request.body;
+    if (!Object.keys(payload).includes('likes')) {
+      payload.likes = 0;
+    }
+    const blog = new Blog(payload);
     const result = await blog.save();
     response.status(201).json(result);
   } catch (error) {

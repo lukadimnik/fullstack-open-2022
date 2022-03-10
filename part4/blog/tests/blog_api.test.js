@@ -75,6 +75,22 @@ test('a valid blog can be added', async () => {
   expect(contents).toContain('Razbojnik');
 });
 
+test('if request for blog creation has missing likes property it will default to 0', async () => {
+  const newBlog = {
+    title: 'Razbojnik',
+    author: 'Franjo Petek',
+    url: 'www.matkurja.si/dolenjska',
+  };
+
+  const postResponse = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+  const savedBlog = postResponse.body;
+  expect(savedBlog).toHaveProperty('likes', 0);
+});
+
 test('every blog has a unique property called id', async () => {
   const response = await api.get('/api/blogs');
   const blogs = response.body;
