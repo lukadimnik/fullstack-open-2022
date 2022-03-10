@@ -58,15 +58,20 @@ test('a valid blog can be added', async () => {
     likes: 14,
   };
 
-  await api
+  const postResponse = await api
     .post('/api/blogs')
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/);
+  const savedBlog = postResponse.body;
+  expect(savedBlog).toHaveProperty('title', 'Razbojnik');
+  expect(savedBlog).toHaveProperty('author', 'Franjo Petek');
+  expect(savedBlog).toHaveProperty('url', 'www.matkurja.si/dolenjska');
+  expect(savedBlog).toHaveProperty('likes', 14);
 
-  const response = await api.get('/api/blogs');
-  const contents = response.body.map((r) => r.title);
-  expect(response.body).toHaveLength(initialBlogs.length + 1);
+  const getResponse = await api.get('/api/blogs');
+  const contents = getResponse.body.map((r) => r.title);
+  expect(getResponse.body).toHaveLength(initialBlogs.length + 1);
   expect(contents).toContain('Razbojnik');
 });
 
