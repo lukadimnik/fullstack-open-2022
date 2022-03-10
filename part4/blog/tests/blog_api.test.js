@@ -70,6 +70,13 @@ test('a valid blog can be added', async () => {
   expect(contents).toContain('Razbojnik');
 });
 
+test('every blog has a unique property called id', async () => {
+  const response = await api.get('/api/blogs');
+  const blogs = response.body;
+  expect(blogs[0]).toHaveProperty('id');
+  expect(blogs[0].id).toBeDefined();
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
