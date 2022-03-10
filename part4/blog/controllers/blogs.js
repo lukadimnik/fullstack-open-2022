@@ -8,19 +8,15 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs);
 });
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', async (request, response) => {
   logger.info('creating a new blog');
-  try {
-    const payload = request.body;
-    if (!Object.keys(payload).includes('likes')) {
-      payload.likes = 0;
-    }
-    const blog = new Blog(payload);
-    const result = await blog.save();
-    response.status(201).json(result);
-  } catch (error) {
-    next(error);
+  const payload = request.body;
+  if (!Object.keys(payload).includes('likes')) {
+    payload.likes = 0;
   }
+  const blog = new Blog(payload);
+  const savedBlog = await blog.save();
+  response.status(201).json(savedBlog);
 });
 
 module.exports = blogsRouter;
