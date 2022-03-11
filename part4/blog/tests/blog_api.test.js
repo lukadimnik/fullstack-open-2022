@@ -12,90 +12,93 @@ beforeEach(async () => {
     await blogObject.save();
   }
 });
+describe('getting all blogs', () => {
+  test('blogs are returned in the json format', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+  }, 100000);
 
-test('blogs are returned in the json format', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/);
-}, 100000);
+  test('api returns correct number of blogs from the db', async () => {
+    const response = await api.get('/api/blogs');
 
-test('api returns correct number of blogs from the db', async () => {
-  const response = await api.get('/api/blogs');
+    expect(response.body).toHaveLength(helper.initialBlogs.length);
+  });
 
-  expect(response.body).toHaveLength(helper.initialBlogs.length);
+  test('the first blog is about dolenjska region', async () => {
+    const response = await api.get('/api/blogs');
+
+    const contents = response.body.map((r) => r.title);
+
+    expect(contents).toContain('Nekje na dolenjskem');
+  });
 });
 
-test('the first blog is about dolenjska region', async () => {
-  const response = await api.get('/api/blogs');
+describe('adding a blog', () => {
+  test('a valid blog can be added', async () => {
+    const newBlog = {
+      title: 'Razbojnik',
+      author: 'Franjo Petek',
+      url: 'www.matkurja.si/dolenjska',
+      likes: 14,
+    };
 
-  const contents = response.body.map((r) => r.title);
+    const postResponse = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+    const savedBlog = postResponse.body;
+    expect(savedBlog).toHaveProperty('title', 'Razbojnik');
+    expect(savedBlog).toHaveProperty('author', 'Franjo Petek');
+    expect(savedBlog).toHaveProperty('url', 'www.matkurja.si/dolenjska');
+    expect(savedBlog).toHaveProperty('likes', 14);
 
-  expect(contents).toContain('Nekje na dolenjskem');
-});
+    const blogsAtEnd = await helper.blogsInDb();
+    const contents = blogsAtEnd.map((r) => r.title);
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
+    expect(contents).toContain('Razbojnik');
+  });
 
-test('a valid blog can be added', async () => {
-  const newBlog = {
-    title: 'Razbojnik',
-    author: 'Franjo Petek',
-    url: 'www.matkurja.si/dolenjska',
-    likes: 14,
-  };
+  test('if request for blog creation has missing likes property it will default to 0', async () => {
+    const newBlog = {
+      title: 'Razbojnik',
+      author: 'Franjo Petek',
+      url: 'www.matkurja.si/dolenjska',
+    };
 
-  const postResponse = await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/);
-  const savedBlog = postResponse.body;
-  expect(savedBlog).toHaveProperty('title', 'Razbojnik');
-  expect(savedBlog).toHaveProperty('author', 'Franjo Petek');
-  expect(savedBlog).toHaveProperty('url', 'www.matkurja.si/dolenjska');
-  expect(savedBlog).toHaveProperty('likes', 14);
+    const postResponse = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+    const savedBlog = postResponse.body;
+    expect(savedBlog).toHaveProperty('likes', 0);
+  });
 
-  const blogsAtEnd = await helper.blogsInDb();
-  const contents = blogsAtEnd.map((r) => r.title);
-  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
-  expect(contents).toContain('Razbojnik');
-});
+  test('if request for blog creation has missing title and url properties it will respond with 400', async () => {
+    const blogMissingTitle = {
+      author: 'Franjo Petek',
+      url: 'www.matkurja.si/dolenjska',
+      likes: 14,
+    };
 
-test('if request for blog creation has missing likes property it will default to 0', async () => {
-  const newBlog = {
-    title: 'Razbojnik',
-    author: 'Franjo Petek',
-    url: 'www.matkurja.si/dolenjska',
-  };
+    const blogMissingUrl = {
+      title: 'Razbojnik',
+      author: 'Franjo Petek',
+      likes: 14,
+    };
 
-  const postResponse = await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/);
-  const savedBlog = postResponse.body;
-  expect(savedBlog).toHaveProperty('likes', 0);
-});
+    const blogMissingUrlTitle = {
+      author: 'Franjo Petek',
+      likes: 14,
+    };
 
-test('if request for blog creation has missing title and url properties it will respond with 400', async () => {
-  const blogMissingTitle = {
-    author: 'Franjo Petek',
-    url: 'www.matkurja.si/dolenjska',
-    likes: 14,
-  };
-
-  const blogMissingUrl = {
-    title: 'Razbojnik',
-    author: 'Franjo Petek',
-    likes: 14,
-  };
-
-  const blogMissingUrlTitle = {
-    author: 'Franjo Petek',
-    likes: 14,
-  };
-
-  await api.post('/api/blogs').send(blogMissingTitle).expect(400);
-  await api.post('/api/blogs').send(blogMissingUrl).expect(400);
-  await api.post('/api/blogs').send(blogMissingUrlTitle).expect(400);
+    await api.post('/api/blogs').send(blogMissingTitle).expect(400);
+    await api.post('/api/blogs').send(blogMissingUrl).expect(400);
+    await api.post('/api/blogs').send(blogMissingUrlTitle).expect(400);
+  });
 });
 
 test('every blog has a unique property called id', async () => {
@@ -139,6 +142,70 @@ describe('deleting a blog', () => {
   });
 });
 
-afterAll(() => {
+describe('updating a blog', () => {
+  test('with only likes in the payload will only update likes field', async () => {
+    const updatePayload = {
+      likes: 50,
+    };
+    const blogsAtStart = await helper.blogsInDb();
+    const updatedBlogAtStart = blogsAtStart[0];
+    expect(updatedBlogAtStart).toHaveProperty('title', 'Nekje na dolenjskem');
+    expect(updatedBlogAtStart).toHaveProperty('author', 'Francek Dolgouhec');
+    expect(updatedBlogAtStart).toHaveProperty(
+      'url',
+      'www.matkurja.si/dolenjska'
+    );
+    expect(updatedBlogAtStart).toHaveProperty('likes', 2);
+
+    await api
+      .put(`/api/blogs/${updatedBlogAtStart.id}`)
+      .send(updatePayload)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const updatedBlogAtEnd = await Blog.findById(updatedBlogAtStart.id);
+    expect(updatedBlogAtEnd).toHaveProperty('title', 'Nekje na dolenjskem');
+    expect(updatedBlogAtEnd).toHaveProperty('author', 'Francek Dolgouhec');
+    expect(updatedBlogAtEnd).toHaveProperty('url', 'www.matkurja.si/dolenjska');
+    expect(updatedBlogAtEnd).toHaveProperty('likes', 50);
+  });
+
+  test('with valid id and valid payload updates the blog fields', async () => {
+    const updatePayload = {
+      title: 'Danger in the woods',
+      author: 'Fingolfin',
+      url: 'www.matkurja.si',
+      likes: 55,
+    };
+    const blogsAtStart = await helper.blogsInDb();
+    const updatedBlogAtStart = blogsAtStart[0];
+    expect(updatedBlogAtStart).toHaveProperty('title', 'Nekje na dolenjskem');
+    expect(updatedBlogAtStart).toHaveProperty('author', 'Francek Dolgouhec');
+    expect(updatedBlogAtStart).toHaveProperty(
+      'url',
+      'www.matkurja.si/dolenjska'
+    );
+    expect(updatedBlogAtStart).toHaveProperty('likes', 2);
+
+    await api
+      .put(`/api/blogs/${updatedBlogAtStart.id}`)
+      .send(updatePayload)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const updatedBlogAtEnd = await Blog.findById(updatedBlogAtStart.id);
+    expect(updatedBlogAtEnd).toHaveProperty('title', 'Danger in the woods');
+    expect(updatedBlogAtEnd).toHaveProperty('author', 'Fingolfin');
+    expect(updatedBlogAtEnd).toHaveProperty('url', 'www.matkurja.si');
+    expect(updatedBlogAtEnd).toHaveProperty('likes', 55);
+  });
+});
+
+afterAll(async () => {
+  await Blog.deleteMany({});
+  for (let blog of helper.initialBlogs) {
+    let blogObject = new Blog(blog);
+    await blogObject.save();
+  }
   mongoose.connection.close();
 });
