@@ -104,6 +104,41 @@ test('every blog has a unique property called id', async () => {
   expect(blogsAtEnd[0].id).toBeDefined();
 });
 
+describe('deleting a blog', () => {
+  test('if the id is valid it responds with status 204', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToDelete = blogsAtStart[0].id;
+
+    await api.delete(`/api/blogs/${blogToDelete}`).expect(204);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1);
+
+    const titles = blogsAtEnd.map((r) => r.title);
+    expect(titles).not.toContain(blogToDelete.title);
+  });
+
+  test('if the id does not exist it responds with status 204', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const nonExistingId = await helper.nonExistingId();
+
+    await api.delete(`/api/blogs/${nonExistingId}`).expect(204);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length);
+  });
+
+  test('if the id is not in the right format it responds with status 400', async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const nonExistingId = '123484';
+
+    await api.delete(`/api/blogs/${nonExistingId}`).expect(400);
+
+    const blogsAtEnd = await helper.blogsInDb();
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length);
+  });
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
