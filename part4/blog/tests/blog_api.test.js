@@ -12,6 +12,7 @@ beforeEach(async () => {
     await blogObject.save();
   }
 });
+
 describe('getting all blogs', () => {
   test('blogs are returned in the json format', async () => {
     await api
