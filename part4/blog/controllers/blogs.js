@@ -2,7 +2,6 @@ const blogsRouter = require('express').Router();
 const Blog = require('../models/blog');
 const User = require('../models/user');
 const logger = require('../utils/logger');
-const jwt = require('jsonwebtoken');
 
 blogsRouter.get('/', async (request, response) => {
   logger.info('Fetching blogs');
@@ -17,40 +16,39 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   logger.info('creating a new blog');
   const payload = request.body;
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
+  const user = request.user;
 
-  if (!decodedToken.id) {
+  if (!user && !user.id) {
     return response.status(401).json({ error: 'token missing or invalid' });
   }
   if (!Object.keys(payload).includes('likes')) {
     payload.likes = 0;
   }
 
-  const user = await User.findById(decodedToken.id);
+  const userFromDb = await User.findById(user.id);
 
-  if (!user) {
+  if (!userFromDb) {
     return response.status(400).json({
       error: 'user with provided id does not exist',
     });
   }
 
-  const blog = new Blog({ ...payload, user: user._id });
+  const blog = new Blog({ ...payload, user: userFromDb._id });
   const savedBlog = await blog.save();
-  user.blogs = user.blogs.concat(savedBlog._id);
-  await user.save();
+  userFromDb.blogs = userFromDb.blogs.concat(savedBlog._id);
+  await userFromDb.save();
   response.status(201).json(savedBlog);
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-
-  if (!decodedToken.id) {
+  const user = request.user;
+  if (!user && !user.id) {
     return response.status(401).json({ error: 'token missing or invalid' });
   }
   const id = request.params.id;
   const blogToDelete = await Blog.findById(id);
 
-  if (blogToDelete.user.toString() !== decodedToken.id.toString()) {
+  if (blogToDelete.user.toString() !== user.id.toString()) {
     return response
       .status(401)
       .json({ error: 'unauthorised to delete this blog' });
