@@ -5,12 +5,19 @@ const app = require('../app');
 const api = supertest(app);
 const Blog = require('../models/blog');
 
+let token;
+
 beforeEach(async () => {
   await Blog.deleteMany({});
   for (let blog of helper.initialBlogs) {
     let blogObject = new Blog(blog);
     await blogObject.save();
   }
+  const response = await api.post('/api/login').send({
+    username: 'batman',
+    password: 'sekret',
+  });
+  token = `Bearer ${response.body.token}`;
 });
 
 describe('getting all blogs', () => {
@@ -48,6 +55,7 @@ describe('adding a blog', () => {
     const postResponse = await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', token)
       .expect(201)
       .expect('Content-Type', /application\/json/);
     const savedBlog = postResponse.body;
@@ -72,6 +80,7 @@ describe('adding a blog', () => {
     const postResponse = await api
       .post('/api/blogs')
       .send(newBlog)
+      .set('Authorization', token)
       .expect(201)
       .expect('Content-Type', /application\/json/);
     const savedBlog = postResponse.body;
@@ -96,9 +105,37 @@ describe('adding a blog', () => {
       likes: 14,
     };
 
-    await api.post('/api/blogs').send(blogMissingTitle).expect(400);
-    await api.post('/api/blogs').send(blogMissingUrl).expect(400);
-    await api.post('/api/blogs').send(blogMissingUrlTitle).expect(400);
+    await api
+      .post('/api/blogs')
+      .send(blogMissingTitle)
+      .set('Authorization', token)
+      .expect(400);
+    await api
+      .post('/api/blogs')
+      .send(blogMissingUrl)
+      .set('Authorization', token)
+      .expect(400);
+
+    await api
+      .post('/api/blogs')
+      .send(blogMissingUrlTitle)
+      .set('Authorization', token)
+      .expect(400);
+  });
+
+  test('creating a blog without a token responds with 401 unauthorized', async () => {
+    const newBlog = {
+      title: 'Letalo',
+      author: 'Franjo Petek',
+      url: 'www.matkurja.si/dolenjska',
+      likes: 8,
+    };
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/);
   });
 });
 
@@ -110,23 +147,42 @@ test('every blog has a unique property called id', async () => {
 
 describe('deleting a blog', () => {
   test('if the id is valid it responds with status 204', async () => {
-    const blogsAtStart = await helper.blogsInDb();
-    const blogToDelete = blogsAtStart[0].id;
+    const newBlog = {
+      title: 'Sladoled',
+      author: 'Ido Smith',
+      url: 'www.google.si',
+      likes: 16,
+    };
 
-    await api.delete(`/api/blogs/${blogToDelete}`).expect(204);
+    const response = await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .set('Authorization', token)
+      .expect(201);
+    const createdBlog = response.body;
+
+    const blogsAtStart = await helper.blogsInDb();
+
+    await api
+      .delete(`/api/blogs/${createdBlog.id}`)
+      .set('Authorization', token)
+      .expect(204);
 
     const blogsAtEnd = await helper.blogsInDb();
     expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1);
 
     const titles = blogsAtEnd.map((r) => r.title);
-    expect(titles).not.toContain(blogToDelete.title);
+    expect(titles).not.toContain(createdBlog.title);
   });
 
   test('if the id does not exist it responds with status 204', async () => {
     const blogsAtStart = await helper.blogsInDb();
     const nonExistingId = await helper.nonExistingId();
 
-    await api.delete(`/api/blogs/${nonExistingId}`).expect(204);
+    await api
+      .delete(`/api/blogs/${nonExistingId}`)
+      .set('Authorization', token)
+      .expect(204);
 
     const blogsAtEnd = await helper.blogsInDb();
     expect(blogsAtEnd).toHaveLength(blogsAtStart.length);
@@ -136,7 +192,10 @@ describe('deleting a blog', () => {
     const blogsAtStart = await helper.blogsInDb();
     const nonExistingId = '123484';
 
-    await api.delete(`/api/blogs/${nonExistingId}`).expect(400);
+    await api
+      .delete(`/api/blogs/${nonExistingId}`)
+      .set('Authorization', token)
+      .expect(400);
 
     const blogsAtEnd = await helper.blogsInDb();
     expect(blogsAtEnd).toHaveLength(blogsAtStart.length);

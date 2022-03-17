@@ -8,6 +8,7 @@ const initialBlogs = [
     url: 'www.matkurja.si/dolenjska',
     likes: 2,
     id: '6225ff2907a94c03aef78979',
+    user: '623223dd03624c07ade5bfa0',
   },
   {
     title: 'Dosti je bilo',
@@ -15,6 +16,7 @@ const initialBlogs = [
     url: 'www.naganajasi.si/kobajagi',
     likes: 5,
     id: '62260040d453461abb8d09c7',
+    user: '623223dd03624c07ade5bfa0',
   },
 ];
 
@@ -29,6 +31,7 @@ const nonExistingId = async () => {
     author: 'Franjo Petek',
     url: 'www.matkurja.si/dolenjska',
     likes: 14,
+    user: '623223dd03624c07ade5bfa0',
   });
   await blog.save();
   await blog.remove();

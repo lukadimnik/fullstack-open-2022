@@ -18,7 +18,7 @@ blogsRouter.post('/', async (request, response) => {
   const payload = request.body;
   const user = request.user;
 
-  if (!user && !user.id) {
+  if (!user || !user.id) {
     return response.status(401).json({ error: 'token missing or invalid' });
   }
   if (!Object.keys(payload).includes('likes')) {
@@ -47,6 +47,10 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
   const id = request.params.id;
   const blogToDelete = await Blog.findById(id);
+
+  if (!blogToDelete) {
+    return response.status(204).end();
+  }
 
   if (blogToDelete.user.toString() !== user.id.toString()) {
     return response
