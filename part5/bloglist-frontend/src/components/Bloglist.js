@@ -1,4 +1,5 @@
 import React from 'react';
+import Blog from './Blog';
 
 const Bloglist = ({ blogs }) => {
   return (
@@ -12,13 +13,7 @@ const Bloglist = ({ blogs }) => {
       </thead>
       <tbody>
         {blogs.map((blog) => (
-          <tr key={blog.id}>
-            <td>{blog.title}</td>
-            <td>{blog.author}</td>
-            <td>
-              <button>View</button>
-            </td>
-          </tr>
+          <Blog key={blog.id} blog={blog} />
         ))}
       </tbody>
     </table>
