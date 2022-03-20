@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react';
-import Blog from './components/Blog';
-import { getAll, setToken, createNewBlog } from './services/blogs';
+import { useState, useEffect, useRef } from 'react';
+import { getAll, setToken } from './services/blogs';
 import loginService from './services/login';
 import Login from './components/Login';
 import Notification from './components/Notification';
+import BlogForm from './components/BlogForm';
 import './index.css';
+import Togglable from './components/Togglable';
+import Bloglist from './components/Bloglist';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState('');
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
   const [notification, setNotification] = useState({});
+  const blogFormRef = useRef();
 
   useEffect(() => {
     getAll().then((blogs) => setBlogs(blogs));
@@ -28,6 +28,11 @@ const App = () => {
       setToken(user.token);
     }
   }, []);
+
+  const addNewBlogToState = (newBlog) => {
+    blogFormRef.current.toggleVisibility();
+    setBlogs([...blogs, newBlog]);
+  };
 
   const handleUsernameChange = (value) => {
     setUsername(value);
@@ -69,29 +74,6 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser');
   };
 
-  const handleBlogFormSubmit = async (event) => {
-    try {
-      event.preventDefault();
-      const newBlogData = {
-        title,
-        author,
-        url,
-      };
-      const newBlog = await createNewBlog(newBlogData);
-      setBlogs([...blogs, newBlog]);
-      showNotification({
-        message: `Blog: ${newBlog.title} added successfully`,
-        type: 'notification',
-      });
-    } catch (error) {
-      showNotification({
-        message: 'Failed to add a new blog',
-        type: 'error',
-      });
-      console.log('blog creation failed', error);
-    }
-  };
-
   const renderBlogs = () => {
     return (
       <>
@@ -99,40 +81,13 @@ const App = () => {
         <p>
           {user.name} logged in <button onClick={handleLogout}>logout</button>
         </p>
-        <h2>Create new blog</h2>
-        <form onSubmit={handleBlogFormSubmit}>
-          <div>
-            Title:
-            <input
-              type='text'
-              value={title}
-              name='Title'
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </div>
-          <div>
-            Athor:
-            <input
-              type='text'
-              value={author}
-              name='Author'
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </div>
-          <div>
-            Url:
-            <input
-              type='text'
-              value={url}
-              name='Url'
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </div>
-          <button type='submit'>create</button>
-        </form>
-        {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
-        ))}
+        <Togglable buttonLabel='new blog' ref={blogFormRef}>
+          <BlogForm
+            showNotification={showNotification}
+            addNewBlogToState={addNewBlogToState}
+          />
+        </Togglable>
+        <Bloglist blogs={blogs} />
       </>
     );
   };
