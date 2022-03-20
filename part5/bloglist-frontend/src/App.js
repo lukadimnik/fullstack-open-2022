@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import Blog from './components/Blog';
 import { getAll, setToken, createNewBlog } from './services/blogs';
 import loginService from './services/login';
+import Login from './components/Login';
+import Notification from './components/Notification';
+import './index.css';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -11,6 +14,7 @@ const App = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+  const [notification, setNotification] = useState({});
 
   useEffect(() => {
     getAll().then((blogs) => setBlogs(blogs));
@@ -25,6 +29,20 @@ const App = () => {
     }
   }, []);
 
+  const handleUsernameChange = (value) => {
+    setUsername(value);
+  };
+
+  const handlePasswordChange = (value) => {
+    setPassword(value);
+  };
+
+  const showNotification = (notification) => {
+    console.log('fired', notification);
+    setNotification(notification);
+    setTimeout(() => setNotification({}), 3000);
+  };
+
   const handleLogin = async (event) => {
     try {
       event.preventDefault();
@@ -33,7 +51,15 @@ const App = () => {
       setUser(user);
       setToken(user.token);
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
+      showNotification({
+        message: `successful login of: ${user.username}`,
+        type: 'notification',
+      });
     } catch (error) {
+      showNotification({
+        message: 'incorrect username or password',
+        type: 'error',
+      });
       console.log('something went wrong', error);
     }
   };
@@ -44,43 +70,26 @@ const App = () => {
   };
 
   const handleBlogFormSubmit = async (event) => {
-    event.preventDefault();
-    const newBlogData = {
-      title,
-      author,
-      url,
-    };
-    const newBlog = await createNewBlog(newBlogData);
-    setBlogs([...blogs, newBlog]);
-  };
-
-  const renderLogin = () => {
-    return (
-      <>
-        <h1>Login</h1>
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              type='text'
-              value={username}
-              name='Username'
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              type='password'
-              value={password}
-              name='Password'
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type='submit'>login</button>
-        </form>
-      </>
-    );
+    try {
+      event.preventDefault();
+      const newBlogData = {
+        title,
+        author,
+        url,
+      };
+      const newBlog = await createNewBlog(newBlogData);
+      setBlogs([...blogs, newBlog]);
+      showNotification({
+        message: `Blog: ${newBlog.title} added successfully`,
+        type: 'notification',
+      });
+    } catch (error) {
+      showNotification({
+        message: 'Failed to add a new blog',
+        type: 'error',
+      });
+      console.log('blog creation failed', error);
+    }
   };
 
   const renderBlogs = () => {
@@ -121,7 +130,6 @@ const App = () => {
           </div>
           <button type='submit'>create</button>
         </form>
-
         {blogs.map((blog) => (
           <Blog key={blog.id} blog={blog} />
         ))}
@@ -129,7 +137,24 @@ const App = () => {
     );
   };
 
-  return <div>{user ? renderBlogs() : renderLogin()}</div>;
+  return (
+    <div>
+      {Boolean(Object.keys(notification).length) && (
+        <Notification notification={notification} />
+      )}
+      {user ? (
+        renderBlogs()
+      ) : (
+        <Login
+          username={username}
+          password={password}
+          onUsernameChange={handleUsernameChange}
+          onPasswordChange={handlePasswordChange}
+          onHandleLogin={handleLogin}
+        />
+      )}
+    </div>
+  );
 };
 
 export default App;
