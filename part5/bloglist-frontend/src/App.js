@@ -34,6 +34,11 @@ const App = () => {
     setBlogs([...blogs, newBlog]);
   };
 
+  const updateBlogsState = (updatedBlog) => {
+    const blogsCopy = blogs.filter((blog) => blog.id !== updatedBlog.id);
+    setBlogs([...blogsCopy, updatedBlog]);
+  };
+
   const handleUsernameChange = (value) => {
     setUsername(value);
   };
@@ -87,7 +92,7 @@ const App = () => {
             addNewBlogToState={addNewBlogToState}
           />
         </Togglable>
-        <Bloglist blogs={blogs} />
+        <Bloglist blogs={blogs} updateBlogsState={updateBlogsState} />
       </>
     );
   };

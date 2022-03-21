@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { updateBlog } from '../services/blogs';
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, updateBlogsState }) => {
   const [expandDetails, setExpandDetails] = useState(false);
   console.log('blog', blog);
 
@@ -10,6 +11,22 @@ const Blog = ({ blog }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5,
+    display: 'block',
+  };
+
+  const handleLikeClick = async () => {
+    console.log('triggered', blog);
+    const payload = {
+      id: blog.id,
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url,
+    };
+    const updatedBlog = await updateBlog(payload);
+    updateBlogsState(updatedBlog);
+    console.log('updatedBlog', updatedBlog);
   };
 
   return (
@@ -28,6 +45,7 @@ const Blog = ({ blog }) => {
           <button onClick={() => setExpandDetails((prevVal) => !prevVal)}>
             {expandDetails ? 'hide' : 'view'}
           </button>
+          <button onClick={handleLikeClick}>like</button>
         </td>
       </tr>
     </>

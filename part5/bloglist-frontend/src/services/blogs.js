@@ -20,4 +20,15 @@ const createNewBlog = async (payload) => {
   return response.data;
 };
 
-export { getAll, setToken, createNewBlog };
+const updateBlog = async (payload) => {
+  console.log('payload', payload);
+
+  const config = {
+    headers: { Authorization: token },
+  };
+  const url = `${baseUrl}/${payload.id}`;
+  const response = await axios.put(url, payload, config);
+  return response.data;
+};
+
+export { getAll, setToken, createNewBlog, updateBlog };
