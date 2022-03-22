@@ -21,8 +21,6 @@ const createNewBlog = async (payload) => {
 };
 
 const updateBlog = async (payload) => {
-  console.log('payload', payload);
-
   const config = {
     headers: { Authorization: token },
   };

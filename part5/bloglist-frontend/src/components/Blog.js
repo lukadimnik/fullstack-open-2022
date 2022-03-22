@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { deleteBlog, updateBlog } from '../services/blogs';
+import PropTypes from 'prop-types';
 
 const Blog = ({ blog, updateBlogsState, deleteBlogFromState }) => {
   const [expandDetails, setExpandDetails] = useState(false);
-  console.log('blog', blog);
 
   const blogStyle = {
     paddingTop: 10,
@@ -15,7 +15,6 @@ const Blog = ({ blog, updateBlogsState, deleteBlogFromState }) => {
   };
 
   const handleLikeClick = async () => {
-    console.log('triggered', blog);
     const payload = {
       id: blog.id,
       user: blog.user.id,
@@ -26,7 +25,6 @@ const Blog = ({ blog, updateBlogsState, deleteBlogFromState }) => {
     };
     const updatedBlog = await updateBlog(payload);
     updateBlogsState(updatedBlog);
-    console.log('updatedBlog', updatedBlog);
   };
 
   const handleDeleteClick = async () => {
@@ -58,6 +56,12 @@ const Blog = ({ blog, updateBlogsState, deleteBlogFromState }) => {
       </tr>
     </>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  updateBlogsState: PropTypes.func.isRequired,
+  deleteBlogFromState: PropTypes.func.isRequired,
 };
 
 export default Blog;

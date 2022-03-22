@@ -53,7 +53,6 @@ const App = () => {
   };
 
   const showNotification = (notification) => {
-    console.log('fired', notification);
     setNotification(notification);
     setTimeout(() => setNotification({}), 3000);
   };
