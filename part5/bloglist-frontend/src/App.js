@@ -39,6 +39,11 @@ const App = () => {
     setBlogs([...blogsCopy, updatedBlog]);
   };
 
+  const deleteBlogFromState = (deletedBlogId) => {
+    const blogsCopy = blogs.filter((blog) => blog.id !== deletedBlogId);
+    setBlogs([...blogsCopy]);
+  };
+
   const handleUsernameChange = (value) => {
     setUsername(value);
   };
@@ -92,7 +97,11 @@ const App = () => {
             addNewBlogToState={addNewBlogToState}
           />
         </Togglable>
-        <Bloglist blogs={blogs} updateBlogsState={updateBlogsState} />
+        <Bloglist
+          blogs={blogs}
+          updateBlogsState={updateBlogsState}
+          deleteBlogFromState={deleteBlogFromState}
+        />
       </>
     );
   };

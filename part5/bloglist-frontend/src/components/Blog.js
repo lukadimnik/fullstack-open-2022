@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { updateBlog } from '../services/blogs';
+import { deleteBlog, updateBlog } from '../services/blogs';
 
-const Blog = ({ blog, updateBlogsState }) => {
+const Blog = ({ blog, updateBlogsState, deleteBlogFromState }) => {
   const [expandDetails, setExpandDetails] = useState(false);
   console.log('blog', blog);
 
@@ -29,6 +29,13 @@ const Blog = ({ blog, updateBlogsState }) => {
     console.log('updatedBlog', updatedBlog);
   };
 
+  const handleDeleteClick = async () => {
+    if (window.confirm(`Are you sure you want to remove: ${blog.title}`)) {
+      await deleteBlog(blog.id);
+      deleteBlogFromState(blog.id);
+    }
+  };
+
   return (
     <>
       <tr style={blogStyle}>
@@ -46,6 +53,7 @@ const Blog = ({ blog, updateBlogsState }) => {
             {expandDetails ? 'hide' : 'view'}
           </button>
           <button onClick={handleLikeClick}>like</button>
+          <button onClick={handleDeleteClick}>delete</button>
         </td>
       </tr>
     </>
