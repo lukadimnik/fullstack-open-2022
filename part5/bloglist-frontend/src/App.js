@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { getAll, setToken } from './services/blogs';
+import { getAll, setToken, updateBlog } from './services/blogs';
 import loginService from './services/login';
 import Login from './components/Login';
 import Notification from './components/Notification';
@@ -83,6 +83,19 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser');
   };
 
+  const handleLikeClick = async (blog) => {
+    const payload = {
+      id: blog.id,
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url,
+    };
+    const updatedBlog = await updateBlog(payload);
+    updateBlogsState(updatedBlog);
+  };
+
   const renderBlogs = () => {
     return (
       <>
@@ -100,6 +113,7 @@ const App = () => {
           blogs={blogs}
           updateBlogsState={updateBlogsState}
           deleteBlogFromState={deleteBlogFromState}
+          handleLikeClick={handleLikeClick}
         />
       </>
     );

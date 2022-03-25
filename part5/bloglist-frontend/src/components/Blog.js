@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { deleteBlog, updateBlog } from '../services/blogs';
+import { deleteBlog } from '../services/blogs';
 import PropTypes from 'prop-types';
 
-const Blog = ({ blog, updateBlogsState, deleteBlogFromState }) => {
+const Blog = ({ blog, deleteBlogFromState, handleLikeClick }) => {
   const [expandDetails, setExpandDetails] = useState(false);
 
   const blogStyle = {
@@ -12,19 +12,6 @@ const Blog = ({ blog, updateBlogsState, deleteBlogFromState }) => {
     borderWidth: 1,
     marginBottom: 5,
     display: 'block',
-  };
-
-  const handleLikeClick = async () => {
-    const payload = {
-      id: blog.id,
-      user: blog.user.id,
-      likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url,
-    };
-    const updatedBlog = await updateBlog(payload);
-    updateBlogsState(updatedBlog);
   };
 
   const handleDeleteClick = async () => {
@@ -52,7 +39,7 @@ const Blog = ({ blog, updateBlogsState, deleteBlogFromState }) => {
           <button onClick={() => setExpandDetails((prevVal) => !prevVal)}>
             {expandDetails ? 'hide' : 'view'}
           </button>
-          <button onClick={handleLikeClick}>like</button>
+          <button onClick={() => handleLikeClick(blog)}>like</button>
           <button onClick={handleDeleteClick}>delete</button>
         </td>
       </tr>

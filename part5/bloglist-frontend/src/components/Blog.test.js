@@ -17,6 +17,7 @@ const blogProps = {
   blog,
   updateBlogsState: jest.fn(),
   deleteBlogFromState: jest.fn(),
+  handleLikeClick: jest.fn(),
 };
 
 describe('blog component', () => {
@@ -49,5 +50,15 @@ describe('blog component', () => {
     expect(queryByText('Smesko')).toBeInTheDocument();
     expect(queryByText('www.matkurja.si')).toBeInTheDocument();
     expect(queryByText('21')).toBeInTheDocument();
+  });
+
+  test('when view button is clicked twice event handler is called twice', () => {
+    render(<Blog {...blogProps} />);
+
+    const likeButton = screen.getByText('like');
+    expect(likeButton).toBeDefined();
+    userEvent.click(likeButton);
+    userEvent.click(likeButton);
+    expect(blogProps.handleLikeClick).toBeCalledTimes(2);
   });
 });
