@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { getAll, setToken, updateBlog } from './services/blogs';
+import { createNewBlog, getAll, setToken, updateBlog } from './services/blogs';
 import loginService from './services/login';
 import Login from './components/Login';
 import Notification from './components/Notification';
@@ -29,9 +29,22 @@ const App = () => {
     }
   }, []);
 
-  const addNewBlogToState = (newBlog) => {
-    blogFormRef.current.toggleVisibility();
-    setBlogs([...blogs, newBlog]);
+  const addNewBlog = async (newBlogData) => {
+    try {
+      blogFormRef.current.toggleVisibility();
+      const newBlog = await createNewBlog(newBlogData);
+      setBlogs([...blogs, newBlog]);
+      showNotification({
+        message: `Blog: ${newBlog.title} added successfully`,
+        type: 'notification',
+      });
+    } catch (error) {
+      showNotification({
+        message: 'Failed to add a new blog',
+        type: 'error',
+      });
+      console.log('blog creation failed', error);
+    }
   };
 
   const updateBlogsState = (updatedBlog) => {
@@ -106,7 +119,7 @@ const App = () => {
         <Togglable buttonLabel='new blog' ref={blogFormRef}>
           <BlogForm
             showNotification={showNotification}
-            addNewBlogToState={addNewBlogToState}
+            addNewBlog={addNewBlog}
           />
         </Togglable>
         <Bloglist

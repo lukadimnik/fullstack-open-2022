@@ -1,32 +1,16 @@
 import React, { useState } from 'react';
-import { createNewBlog } from '../services/blogs';
 
-const BlogForm = ({ showNotification, addNewBlogToState }) => {
+const BlogForm = ({ addNewBlog }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
 
-  const handleBlogFormSubmit = async (event) => {
-    try {
-      event.preventDefault();
-      const newBlogData = {
-        title,
-        author,
-        url,
-      };
-      const newBlog = await createNewBlog(newBlogData);
-      addNewBlogToState(newBlog);
-      showNotification({
-        message: `Blog: ${newBlog.title} added successfully`,
-        type: 'notification',
-      });
-    } catch (error) {
-      showNotification({
-        message: 'Failed to add a new blog',
-        type: 'error',
-      });
-      console.log('blog creation failed', error);
-    }
+  const handleBlogFormSubmit = (event) => {
+    event.preventDefault();
+    addNewBlog({ title, author, url });
+    setTitle('');
+    setAuthor('');
+    setUrl('');
   };
 
   return (
@@ -36,6 +20,7 @@ const BlogForm = ({ showNotification, addNewBlogToState }) => {
         <div>
           Title:
           <input
+            id='titleInput'
             type='text'
             value={title}
             name='Title'
@@ -45,6 +30,7 @@ const BlogForm = ({ showNotification, addNewBlogToState }) => {
         <div>
           Athor:
           <input
+            id='authorInput'
             type='text'
             value={author}
             name='Author'
@@ -54,13 +40,16 @@ const BlogForm = ({ showNotification, addNewBlogToState }) => {
         <div>
           Url:
           <input
+            id='urlInput'
             type='text'
             value={url}
             name='Url'
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button type='submit'>create</button>
+        <button id='submit' type='submit'>
+          create
+        </button>
       </form>
     </>
   );
