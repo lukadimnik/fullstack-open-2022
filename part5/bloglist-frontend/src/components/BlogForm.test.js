@@ -2,7 +2,7 @@ import BlogForm from './BlogForm';
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 const addNewBlogSpy = jest.fn();
 
@@ -14,7 +14,7 @@ const blogFormProps = {
 describe('BlogForm', () => {
   test('clicking on the button submit calls the event handler with the right arguments', async () => {
     const { container } = render(<BlogForm {...blogFormProps} />);
-
+    screen.debug();
     const titleInput = container.querySelector('#titleInput');
     const authorInput = container.querySelector('#authorInput');
     const urlInput = container.querySelector('#urlInput');
