@@ -79,6 +79,24 @@ describe('Blog app', function () {
         cy.get('.blog__firstblog').contains('view').click();
         cy.get('.blog__firstblog').contains('1');
       });
+
+      it('user who created the blog can delete it', function () {
+        cy.get('.blog__firstblog').contains('delete').click();
+        cy.get('html').should('not.contain', 'first blog');
+      });
+
+      it('user who didnt create the blog cant delete it', function () {
+        const user = {
+          name: 'John Smith',
+          username: 'jsmith',
+          password: 'testing',
+        };
+        cy.request('POST', 'http://localhost:3003/api/users/', user);
+        cy.visit('http://localhost:3000');
+        cy.login({ username: 'jsmith', password: 'testing' });
+        cy.get('.blog__firstblog').contains('delete').click();
+        cy.contains('first blog');
+      });
     });
   });
 });
