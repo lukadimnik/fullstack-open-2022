@@ -22,28 +22,26 @@ const Blog = ({ blog, deleteBlogFromState, handleLikeClick }) => {
   };
 
   return (
-    <>
-      <tr className='blog' style={blogStyle}>
-        <td className='title'>{blog.title}</td>
-        <td className='author'>{blog.author}</td>
-        {expandDetails && (
-          <>
-            <td className='url'>{blog.url}</td>
-            <td className='likes'>{blog.likes}</td>
-            <td className='username'>
-              {blog.user ? blog.user.username : 'unknown user'}
-            </td>
-          </>
-        )}
-        <td>
-          <button onClick={() => setExpandDetails((prevVal) => !prevVal)}>
-            {expandDetails ? 'hide' : 'view'}
-          </button>
-          <button onClick={() => handleLikeClick(blog)}>like</button>
-          <button onClick={handleDeleteClick}>delete</button>
-        </td>
-      </tr>
-    </>
+    <tr className={`blog__${blog.title.split(' ').join('')}`} style={blogStyle}>
+      <td className='title'>{blog.title}</td>
+      <td className='author'>{blog.author}</td>
+      {expandDetails && (
+        <>
+          <td className='url'>{blog.url}</td>
+          <td className='likes'>{blog.likes}</td>
+          <td className='username'>
+            {blog.user ? blog.user.username : 'unknown user'}
+          </td>
+        </>
+      )}
+      <td>
+        <button onClick={() => setExpandDetails((prevVal) => !prevVal)}>
+          {expandDetails ? 'hide' : 'view'}
+        </button>
+        <button onClick={() => handleLikeClick(blog)}>like</button>
+        <button onClick={handleDeleteClick}>delete</button>
+      </td>
+    </tr>
   );
 };
 

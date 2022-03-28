@@ -53,5 +53,32 @@ describe('Blog app', function () {
       cy.contains('Blog: Pod svobodnim soncem added successfully');
       cy.contains('Fran Saleski Finzgar');
     });
+
+    describe('and several blogs exist', function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'first blog',
+          author: 'Author1',
+          url: 'www.google.com',
+        });
+        cy.createBlog({
+          title: 'second blog',
+          author: 'Author2',
+          url: 'www.najdi.si',
+        });
+        cy.createBlog({
+          title: 'third blog',
+          author: 'Author3',
+          url: 'www.yahoo.com',
+        });
+      });
+
+      it('we can increase the likes on the blog', function () {
+        cy.get('.blog__firstblog').contains('like').click();
+        cy.get('.blog__firstblog').contains('like').click();
+        cy.get('.blog__firstblog').contains('view').click();
+        cy.get('.blog__firstblog').contains('1');
+      });
+    });
   });
 });
