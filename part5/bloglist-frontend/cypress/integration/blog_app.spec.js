@@ -37,4 +37,21 @@ describe('Blog app', function () {
       cy.get('html').should('not.contain', 'Luka Dimnik logged in');
     });
   });
+
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.login({ username: 'ldimnik', password: 'test' });
+    });
+
+    it('A blog can be created', function () {
+      cy.get('#new-blog-button').click();
+      cy.get('#titleInput').type('Pod svobodnim soncem');
+      cy.get('#authorInput').type('Fran Saleski Finzgar');
+      cy.get('#urlInput').type('www.siol.net/si');
+
+      cy.get('#create-blog-button').click();
+      cy.contains('Blog: Pod svobodnim soncem added successfully');
+      cy.contains('Fran Saleski Finzgar');
+    });
+  });
 });
