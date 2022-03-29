@@ -1,5 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { createNewBlog, getAll, setToken, updateBlog } from './services/blogs';
+import {
+  createNewBlog,
+  deleteBlog,
+  getAll,
+  setToken,
+  updateBlog,
+} from './services/blogs';
 import loginService from './services/login';
 import Login from './components/Login';
 import Notification from './components/Notification';
@@ -52,9 +58,21 @@ const App = () => {
     setBlogs([...blogsCopy, updatedBlog]);
   };
 
-  const deleteBlogFromState = (deletedBlogId) => {
-    const blogsCopy = blogs.filter((blog) => blog.id !== deletedBlogId);
-    setBlogs([...blogsCopy]);
+  const deleteBlogHandler = async (deletedBlogId) => {
+    try {
+      await deleteBlog(deletedBlogId);
+      const blogsCopy = blogs.filter((blog) => blog.id !== deletedBlogId);
+      setBlogs([...blogsCopy]);
+      showNotification({
+        message: 'Blog successfully deleted',
+        type: 'notification',
+      });
+    } catch (error) {
+      showNotification({
+        message: 'Failed to delete the blog',
+        type: 'error',
+      });
+    }
   };
 
   const handleUsernameChange = (value) => {
@@ -125,7 +143,7 @@ const App = () => {
         <Bloglist
           blogs={blogs}
           updateBlogsState={updateBlogsState}
-          deleteBlogFromState={deleteBlogFromState}
+          deleteBlog={deleteBlogHandler}
           handleLikeClick={handleLikeClick}
         />
       </>

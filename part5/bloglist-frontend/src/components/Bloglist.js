@@ -1,7 +1,7 @@
 import React from 'react';
 import Blog from './Blog';
 
-const Bloglist = ({ blogs, updateBlogsState, deleteBlogFromState, handleLikeClick }) => {
+const Bloglist = ({ blogs, updateBlogsState, deleteBlog, handleLikeClick }) => {
   return (
     <table>
       <thead>
@@ -19,7 +19,7 @@ const Bloglist = ({ blogs, updateBlogsState, deleteBlogFromState, handleLikeClic
               key={blog.id}
               blog={blog}
               updateBlogsState={updateBlogsState}
-              deleteBlogFromState={deleteBlogFromState}
+              deleteBlog={deleteBlog}
               handleLikeClick={handleLikeClick}
             />
           ))}

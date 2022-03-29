@@ -97,6 +97,32 @@ describe('Blog app', function () {
         cy.get('.blog__firstblog').contains('delete').click();
         cy.contains('first blog');
       });
+
+      it('blogs are sorted in descending order according to likes', function () {
+        cy.get('.blog__firstblog')
+          .contains('like')
+          .then((likeButton) => cy.wrap(likeButton).click());
+        cy.get('.blog__secondblog')
+          .contains('like')
+          .then((likeButton) => cy.wrap(likeButton).click())
+          .then((likeButton) => cy.wrap(likeButton).click())
+          .then((likeButton) => cy.wrap(likeButton).click())
+          .then((likeButton) => cy.wrap(likeButton).click());
+        cy.get('.blog__thirdblog')
+          .contains('like')
+          .then((likeButton) => cy.wrap(likeButton).click())
+          .then((likeButton) => cy.wrap(likeButton).click());
+
+        cy.get('.blog__firstblog').contains('view').click();
+        cy.get('.blog__secondblog').contains('view').click();
+        cy.get('.blog__thirdblog').contains('view').click();
+
+        cy.get('.likes').then((likes) => {
+          cy.wrap(likes[0]).contains('4');
+          cy.wrap(likes[1]).contains('2');
+          cy.wrap(likes[2]).contains('1');
+        });
+      });
     });
   });
 });

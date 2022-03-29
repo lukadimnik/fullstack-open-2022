@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { deleteBlog } from '../services/blogs';
 import PropTypes from 'prop-types';
 
-const Blog = ({ blog, deleteBlogFromState, handleLikeClick }) => {
+const Blog = ({ blog, deleteBlog, handleLikeClick }) => {
   const [expandDetails, setExpandDetails] = useState(false);
 
   const blogStyle = {
@@ -14,11 +13,8 @@ const Blog = ({ blog, deleteBlogFromState, handleLikeClick }) => {
     display: 'block',
   };
 
-  const handleDeleteClick = async () => {
-    if (window.confirm(`Are you sure you want to remove: ${blog.title}`)) {
-      await deleteBlog(blog.id);
-      deleteBlogFromState(blog.id);
-    }
+  const handleDeleteClick = () => {
+    deleteBlog(blog.id);
   };
 
   return (
@@ -48,7 +44,7 @@ const Blog = ({ blog, deleteBlogFromState, handleLikeClick }) => {
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   updateBlogsState: PropTypes.func.isRequired,
-  deleteBlogFromState: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
 };
 
 export default Blog;
