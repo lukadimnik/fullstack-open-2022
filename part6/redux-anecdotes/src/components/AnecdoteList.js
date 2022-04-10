@@ -15,9 +15,9 @@ const AnecdoteList = () => {
     dispatch(initializeAnecdotes());
   }, [dispatch]);
 
-  const vote = (id) => {
-    console.log('vote', id);
-    dispatch(increaseVote(id));
+  const vote = (anecdote) => {
+    console.log('vote', anecdote.id);
+    dispatch(increaseVote(anecdote));
   };
 
   return (
@@ -27,7 +27,7 @@ const AnecdoteList = () => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes}
-            <button onClick={() => vote(anecdote.id)}>vote</button>
+            <button onClick={() => vote(anecdote)}>vote</button>
           </div>
         </div>
       ))}

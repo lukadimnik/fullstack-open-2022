@@ -15,3 +15,13 @@ export const createNewAnecdote = async (content) => {
   const response = await axios.post(baseUrl, payload);
   return response.data;
 };
+
+export const vote = async (payload) => {
+  const response = await axios.put(`${baseUrl}/${payload.id}`, payload);
+  return response.data;
+};
+
+export const getAnecdoteById = async (id) => {
+  const response = await axios.get(`${baseUrl}/${id}`);
+  return response.data;
+};
