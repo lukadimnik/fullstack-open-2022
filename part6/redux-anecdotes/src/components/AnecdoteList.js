@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllAnecdotes } from '../noteService';
+import { getAllAnecdotes } from '../anecdoteService';
 import { increaseVote, setAnecdotes } from '../reducers/anecdoteReducer';
 
 const AnecdoteList = () => {
