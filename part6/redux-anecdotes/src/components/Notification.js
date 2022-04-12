@@ -1,7 +1,6 @@
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 
 const Notification = (props) => {
-  // const notification = useSelector((state) => state.notifications);
   const style = {
     border: 'solid',
     padding: 10,
