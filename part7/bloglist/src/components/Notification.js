@@ -1,7 +1,12 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
-const Notification = (props) => {
-  const { type, message } = props.notification;
+const Notification = () => {
+  const { type, message } = useSelector((state) => state.notifications);
+
+  if (!message) {
+    return null;
+  }
   return <h1 className={type}>{message}</h1>;
 };
 
