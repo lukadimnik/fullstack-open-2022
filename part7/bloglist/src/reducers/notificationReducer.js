@@ -19,9 +19,10 @@ export const { setNotification, removeNotification } =
 export default notificationSlice.reducer;
 
 export const displayNotification = (notification) => {
+  clearTimeout(window.timeout);
   return async (dispatch) => {
     dispatch(setNotification(notification));
-    setTimeout(() => {
+    window.timeout = setTimeout(() => {
       dispatch(removeNotification());
     }, 4000);
   };

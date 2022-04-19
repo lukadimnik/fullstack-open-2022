@@ -12,17 +12,15 @@ const Bloglist = ({ blogs, updateBlogsState, deleteBlog, handleLikeClick }) => {
         </tr>
       </thead>
       <tbody>
-        {blogs
-          .sort((a, b) => b.likes - a.likes)
-          .map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              updateBlogsState={updateBlogsState}
-              deleteBlog={deleteBlog}
-              handleLikeClick={handleLikeClick}
-            />
-          ))}
+        {blogs.map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateBlogsState={updateBlogsState}
+            deleteBlog={deleteBlog}
+            handleLikeClick={handleLikeClick}
+          />
+        ))}
       </tbody>
     </table>
   );

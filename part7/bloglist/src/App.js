@@ -1,11 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import {
-  createNewBlog,
-  deleteBlog,
-  getAll,
-  setToken,
-  updateBlog,
-} from './services/blogs';
+import { deleteBlog, getAll, setToken, updateBlog } from './services/blogs';
 import loginService from './services/login';
 import Login from './components/Login';
 import Notification from './components/Notification';
@@ -13,19 +7,20 @@ import BlogForm from './components/BlogForm';
 import './index.css';
 import Togglable from './components/Togglable';
 import Bloglist from './components/Bloglist';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { displayNotification } from './reducers/notificationReducer';
+import { addNewBlog, setBlogs } from './reducers/blogReducer';
 
 const App = () => {
   const dispatch = useDispatch();
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector((state) => state.blogs);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState('');
   const blogFormRef = useRef();
 
   useEffect(() => {
-    getAll().then((blogs) => setBlogs(blogs));
+    getAll().then((blogs) => dispatch(setBlogs(blogs)));
   }, []);
 
   useEffect(() => {
@@ -37,22 +32,9 @@ const App = () => {
     }
   }, []);
 
-  const addNewBlog = async (newBlogData) => {
-    try {
-      blogFormRef.current.toggleVisibility();
-      const newBlog = await createNewBlog(newBlogData);
-      setBlogs([...blogs, newBlog]);
-      showNotification({
-        message: `Blog: ${newBlog.title} added successfully`,
-        type: 'notification',
-      });
-    } catch (error) {
-      showNotification({
-        message: 'Failed to add a new blog',
-        type: 'error',
-      });
-      console.log('blog creation failed', error);
-    }
+  const handleCreateBlogClick = async (newBlogData) => {
+    dispatch(addNewBlog(newBlogData));
+    blogFormRef.current.toggleVisibility();
   };
 
   const updateBlogsState = (updatedBlog) => {
@@ -88,7 +70,6 @@ const App = () => {
   const showNotification = (notification) => {
     displayNotification(notification);
     dispatch(displayNotification(notification));
-    setTimeout(() => displayNotification({}), 3000);
   };
 
   const handleLogin = async (event) => {
@@ -140,7 +121,7 @@ const App = () => {
         <Togglable buttonLabel="new blog" ref={blogFormRef}>
           <BlogForm
             showNotification={showNotification}
-            addNewBlog={addNewBlog}
+            addNewBlog={handleCreateBlogClick}
           />
         </Togglable>
         <Bloglist
