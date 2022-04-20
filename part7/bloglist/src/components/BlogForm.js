@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addNewBlog } from '../reducers/blogReducer';
 
-const BlogForm = ({ addNewBlog }) => {
+const BlogForm = ({ toggleForm }) => {
+  const dispatch = useDispatch();
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
 
   const handleBlogFormSubmit = (event) => {
     event.preventDefault();
-    addNewBlog({ title, author, url });
+    dispatch(addNewBlog({ title, author, url }));
+    toggleForm();
     setTitle('');
     setAuthor('');
     setUrl('');
@@ -20,34 +24,34 @@ const BlogForm = ({ addNewBlog }) => {
         <div>
           Title:
           <input
-            id='titleInput'
-            type='text'
+            id="titleInput"
+            type="text"
             value={title}
-            name='Title'
+            name="Title"
             onChange={({ target }) => setTitle(target.value)}
           />
         </div>
         <div>
           Athor:
           <input
-            id='authorInput'
-            type='text'
+            id="authorInput"
+            type="text"
             value={author}
-            name='Author'
+            name="Author"
             onChange={({ target }) => setAuthor(target.value)}
           />
         </div>
         <div>
           Url:
           <input
-            id='urlInput'
-            type='text'
+            id="urlInput"
+            type="text"
             value={url}
-            name='Url'
+            name="Url"
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button id='create-blog-button' type='submit'>
+        <button id="create-blog-button" type="submit">
           create
         </button>
       </form>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { deleteBlog, getAll, setToken, updateBlog } from './services/blogs';
+import { setToken } from './services/blogs';
 import loginService from './services/login';
 import Login from './components/Login';
 import Notification from './components/Notification';
@@ -9,7 +9,7 @@ import Togglable from './components/Togglable';
 import Bloglist from './components/Bloglist';
 import { useDispatch, useSelector } from 'react-redux';
 import { displayNotification } from './reducers/notificationReducer';
-import { addNewBlog, setBlogs } from './reducers/blogReducer';
+import { initializeBlogs } from './reducers/blogReducer';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -20,7 +20,7 @@ const App = () => {
   const blogFormRef = useRef();
 
   useEffect(() => {
-    getAll().then((blogs) => dispatch(setBlogs(blogs)));
+    dispatch(initializeBlogs());
   }, []);
 
   useEffect(() => {
@@ -32,31 +32,8 @@ const App = () => {
     }
   }, []);
 
-  const handleCreateBlogClick = async (newBlogData) => {
-    dispatch(addNewBlog(newBlogData));
+  const toggleForm = () => {
     blogFormRef.current.toggleVisibility();
-  };
-
-  const updateBlogsState = (updatedBlog) => {
-    const blogsCopy = blogs.filter((blog) => blog.id !== updatedBlog.id);
-    setBlogs([...blogsCopy, updatedBlog]);
-  };
-
-  const deleteBlogHandler = async (deletedBlogId) => {
-    try {
-      await deleteBlog(deletedBlogId);
-      const blogsCopy = blogs.filter((blog) => blog.id !== deletedBlogId);
-      setBlogs([...blogsCopy]);
-      showNotification({
-        message: 'Blog successfully deleted',
-        type: 'notification',
-      });
-    } catch (error) {
-      showNotification({
-        message: 'Failed to delete the blog',
-        type: 'error',
-      });
-    }
   };
 
   const handleUsernameChange = (value) => {
@@ -68,7 +45,6 @@ const App = () => {
   };
 
   const showNotification = (notification) => {
-    displayNotification(notification);
     dispatch(displayNotification(notification));
   };
 
@@ -98,19 +74,6 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser');
   };
 
-  const handleLikeClick = async (blog) => {
-    const payload = {
-      id: blog.id,
-      user: blog.user.id,
-      likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url,
-    };
-    const updatedBlog = await updateBlog(payload);
-    updateBlogsState(updatedBlog);
-  };
-
   const renderBlogs = () => {
     return (
       <>
@@ -119,17 +82,9 @@ const App = () => {
           {user.name} logged in <button onClick={handleLogout}>logout</button>
         </p>
         <Togglable buttonLabel="new blog" ref={blogFormRef}>
-          <BlogForm
-            showNotification={showNotification}
-            addNewBlog={handleCreateBlogClick}
-          />
+          <BlogForm toggleForm={toggleForm} />
         </Togglable>
-        <Bloglist
-          blogs={blogs}
-          updateBlogsState={updateBlogsState}
-          deleteBlog={deleteBlogHandler}
-          handleLikeClick={handleLikeClick}
-        />
+        <Bloglist blogs={blogs} />
       </>
     );
   };

@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import { increaseLike, removeBlog } from '../reducers/blogReducer';
 
-const Blog = ({ blog, deleteBlog, handleLikeClick }) => {
+const Blog = ({ blog }) => {
+  const dispatch = useDispatch();
   const [expandDetails, setExpandDetails] = useState(false);
 
   const blogStyle = {
@@ -12,20 +15,17 @@ const Blog = ({ blog, deleteBlog, handleLikeClick }) => {
     marginBottom: 5,
     display: 'block',
   };
-
-  const handleDeleteClick = () => {
-    deleteBlog(blog.id);
-  };
+  increaseLike;
 
   return (
     <tr className={`blog__${blog.title.split(' ').join('')}`} style={blogStyle}>
-      <td className='title'>{blog.title}</td>
-      <td className='author'>{blog.author}</td>
+      <td className="title">{blog.title}</td>
+      <td className="author">{blog.author}</td>
       {expandDetails && (
         <>
-          <td className='url'>{blog.url}</td>
-          <td className='likes'>{blog.likes}</td>
-          <td className='username'>
+          <td className="url">{blog.url}</td>
+          <td className="likes">{blog.likes}</td>
+          <td className="username">
             {blog.user ? blog.user.username : 'unknown user'}
           </td>
         </>
@@ -34,8 +34,8 @@ const Blog = ({ blog, deleteBlog, handleLikeClick }) => {
         <button onClick={() => setExpandDetails((prevVal) => !prevVal)}>
           {expandDetails ? 'hide' : 'view'}
         </button>
-        <button onClick={() => handleLikeClick(blog)}>like</button>
-        <button onClick={handleDeleteClick}>delete</button>
+        <button onClick={() => dispatch(increaseLike(blog))}>like</button>
+        <button onClick={() => dispatch(removeBlog(blog.id))}>delete</button>
       </td>
     </tr>
   );
@@ -43,8 +43,6 @@ const Blog = ({ blog, deleteBlog, handleLikeClick }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  updateBlogsState: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
 };
 
 export default Blog;

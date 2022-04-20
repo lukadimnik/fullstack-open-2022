@@ -1,7 +1,7 @@
 import React from 'react';
 import Blog from './Blog';
 
-const Bloglist = ({ blogs, updateBlogsState, deleteBlog, handleLikeClick }) => {
+const Bloglist = ({ blogs }) => {
   return (
     <table>
       <thead>
@@ -13,13 +13,7 @@ const Bloglist = ({ blogs, updateBlogsState, deleteBlog, handleLikeClick }) => {
       </thead>
       <tbody>
         {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            updateBlogsState={updateBlogsState}
-            deleteBlog={deleteBlog}
-            handleLikeClick={handleLikeClick}
-          />
+          <Blog key={blog.id} blog={blog} />
         ))}
       </tbody>
     </table>
