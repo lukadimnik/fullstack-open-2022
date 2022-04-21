@@ -10,13 +10,14 @@ import Bloglist from './components/Bloglist';
 import { useDispatch, useSelector } from 'react-redux';
 import { displayNotification } from './reducers/notificationReducer';
 import { initializeBlogs } from './reducers/blogReducer';
+import { setUser } from './reducers/userReducer';
 
 const App = () => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.users);
   const blogs = useSelector((state) => state.blogs);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [user, setUser] = useState('');
   const blogFormRef = useRef();
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser');
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      dispatch(setUser(user));
       setToken(user.token);
     }
   }, []);
@@ -53,7 +54,7 @@ const App = () => {
       event.preventDefault();
       console.log('logging with', username, password);
       const user = await loginService(username, password);
-      setUser(user);
+      dispatch(setUser(user));
       setToken(user.token);
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user));
       showNotification({
@@ -70,7 +71,7 @@ const App = () => {
   };
 
   const handleLogout = () => {
-    setUser(null);
+    dispatch(setUser(null));
     window.localStorage.removeItem('loggedBlogAppUser');
   };
 
