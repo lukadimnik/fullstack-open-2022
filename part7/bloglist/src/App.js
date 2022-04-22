@@ -10,11 +10,14 @@ import Bloglist from './components/Bloglist';
 import { useDispatch, useSelector } from 'react-redux';
 import { displayNotification } from './reducers/notificationReducer';
 import { initializeBlogs } from './reducers/blogReducer';
-import { setUser } from './reducers/userReducer';
+import { initializeUsers, setUser } from './reducers/userReducer';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Users from './components/Users';
+import Header from './components/Header';
 
 const App = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.users);
+  const user = useSelector((state) => state.users.user);
   const blogs = useSelector((state) => state.blogs);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -22,6 +25,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs());
+    dispatch(initializeUsers());
   }, []);
 
   useEffect(() => {
@@ -70,18 +74,9 @@ const App = () => {
     }
   };
 
-  const handleLogout = () => {
-    dispatch(setUser(null));
-    window.localStorage.removeItem('loggedBlogAppUser');
-  };
-
   const renderBlogs = () => {
     return (
       <>
-        <h1>BLOGS</h1>
-        <p>
-          {user.name} logged in <button onClick={handleLogout}>logout</button>
-        </p>
         <Togglable buttonLabel="new blog" ref={blogFormRef}>
           <BlogForm toggleForm={toggleForm} />
         </Togglable>
@@ -91,20 +86,31 @@ const App = () => {
   };
 
   return (
-    <div>
-      <Notification />
-      {user ? (
-        renderBlogs()
-      ) : (
-        <Login
-          username={username}
-          password={password}
-          onUsernameChange={handleUsernameChange}
-          onPasswordChange={handlePasswordChange}
-          onHandleLogin={handleLogin}
-        />
-      )}
-    </div>
+    <Router>
+      <div>
+        <Notification />
+        <Header />
+        <Routes>
+          <Route path="users" element={<Users />} />
+          <Route
+            path="/"
+            element={
+              user ? (
+                renderBlogs()
+              ) : (
+                <Login
+                  username={username}
+                  password={password}
+                  onUsernameChange={handleUsernameChange}
+                  onPasswordChange={handlePasswordChange}
+                  onHandleLogin={handleLogin}
+                />
+              )
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
