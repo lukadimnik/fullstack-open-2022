@@ -16,7 +16,9 @@ const BlogView = () => {
   return (
     <>
       <h1>{blog.title}</h1>
-      <a href={blog.url}>{blog.url}</a>
+      <a href={blog.url} target="_blank" rel="noreferrer">
+        {blog.url}
+      </a>
       <p>
         {blog.likes} likes{' '}
         <button onClick={() => dispatch(increaseLike(blog))}>like</button>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { logout } from '../reducers/userReducer';
-logout;
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -11,11 +11,29 @@ const Header = () => {
     return null;
   }
 
+  const padding = {
+    paddingRight: 5,
+  };
+
   return (
     <>
       <h1>BLOGS</h1>
-      <p>{user.name} logged in</p>
-      <button onClick={() => dispatch(logout())}>logout</button>
+      <div className="navbar">
+        <div className="navbar-links">
+          <Link to="/users" style={padding}>
+            users
+          </Link>
+          <Link to="/" style={padding}>
+            blogs
+          </Link>
+        </div>
+        <div className="user-info">
+          <p>
+            {user.name} logged in{' '}
+            <button onClick={() => dispatch(logout())}>logout</button>
+          </p>
+        </div>
+      </div>
     </>
   );
 };

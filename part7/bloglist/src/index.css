@@ -29,3 +29,14 @@ th {
 table {
   margin-top: 10px;
 }
+
+.navbar {
+  display: flex;
+  align-items: center;
+  border: 1px solid black;
+  padding: 5px;
+  margin-bottom: 30px;
+  justify-content: space-between;
+  border-radius: 6px;
+  background-color: rgb(219, 209, 209);
+}
