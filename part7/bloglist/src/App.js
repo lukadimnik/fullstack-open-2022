@@ -14,7 +14,8 @@ import { initializeUsers, setUser } from './reducers/userReducer';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Users from './components/Users';
 import Header from './components/Header';
-import User from './components/User';
+import UserView from './components/UserView';
+import BlogView from './components/BlogView';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -92,7 +93,8 @@ const App = () => {
         <Notification />
         <Header />
         <Routes>
-          <Route path="users/:id" element={<User />} />
+          <Route path="blogs/:id" element={<BlogView />} />
+          <Route path="users/:id" element={<UserView />} />
           <Route path="users" element={<Users />} />
           <Route
             path="/"

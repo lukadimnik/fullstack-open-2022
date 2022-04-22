@@ -17,3 +17,15 @@
   padding: 10px;
   margin-bottom: 10px;
 }
+
+td {
+  border: 1px solid #cbcbcb;
+}
+
+th {
+  border: 1px solid black;
+}
+
+table {
+  margin-top: 10px;
+}

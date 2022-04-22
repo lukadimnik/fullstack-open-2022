@@ -84,7 +84,8 @@ export const removeBlog = (id) => {
 
 export const increaseLike = (blog) => {
   return async (dispatch) => {
-    const updatedBlog = await updateBlog(blog);
+    const blogWithUpdatedLikes = { ...blog, likes: blog.likes + 1 };
+    const updatedBlog = await updateBlog(blogWithUpdatedLikes);
     dispatch(addLlike(updatedBlog.id));
   };
 };
