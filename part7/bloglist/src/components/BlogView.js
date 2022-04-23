@@ -24,6 +24,12 @@ const BlogView = () => {
         <button onClick={() => dispatch(increaseLike(blog))}>like</button>
       </p>
       <p>Added by {blog.user ? blog.user.username : 'anonymous'}</p>
+      <h2>Comments:</h2>
+      <ul>
+        {blog.comments.map((comment, i) => (
+          <li key={i}>{comment.content}</li>
+        ))}
+      </ul>
     </>
   );
 };
