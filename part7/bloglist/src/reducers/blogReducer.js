@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
+  createComment,
   createNewBlog,
   deleteBlog,
   getAll,
@@ -30,11 +31,28 @@ const blogSlice = createSlice({
         return blog;
       });
     },
+    addComment(state, action) {
+      const id = action.payload.id;
+      return state.map((blog) => {
+        if (blog.id === id) {
+          return {
+            ...blog,
+            comments: [...blog.comments, action.payload.comment],
+          };
+        }
+        return blog;
+      });
+    },
   },
 });
 
-export const { setBlogs, appendBlog, deleteBlogFromState, addLlike } =
-  blogSlice.actions;
+export const {
+  setBlogs,
+  appendBlog,
+  deleteBlogFromState,
+  addLlike,
+  addComment,
+} = blogSlice.actions;
 export default blogSlice.reducer;
 
 export const addNewBlog = (blog) => {
@@ -94,5 +112,12 @@ export const initializeBlogs = () => {
   return async (dispatch) => {
     const blogs = await getAll();
     dispatch(setBlogs(blogs));
+  };
+};
+
+export const addNewComment = (blogId, content) => {
+  return async (dispatch) => {
+    const savedComment = await createComment(blogId, content);
+    dispatch(addComment({ id: blogId, comment: savedComment }));
   };
 };
