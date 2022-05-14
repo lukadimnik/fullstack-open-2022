@@ -129,10 +129,7 @@ const typeDefs = gql`
       published: Int!
       genres: [String!]!
     ): Book!
-    addAuthor(
-      name: String!
-      born: Int
-    ): Author!
+    addAuthor(name: String!, born: Int): Author!
     editAuthor(name: String!, setBornTo: Int!): Author
   }
 
@@ -146,8 +143,14 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
+    bookCount: async () => {
+      const books = await Book.find({});
+      return books.length;
+    },
+    authorCount: async () => {
+      const authors = await Author.find({});
+      return authors.length;
+    },
     allBooks: async (root, args) => {
       console.log('executed');
       // if (args.author && args.genre) {
@@ -170,11 +173,13 @@ const resolvers = {
     },
   },
   Author: {
-    bookCount: (root) =>
-      books.filter((book) => book.author === root.name).length,
+    bookCount: async (root) => {
+      const books = await Book.find({ author: root.name });
+      return books.length;
+    },
   },
   Mutation: {
-    addBook: (root, args) => {
+    addBook: async (root, args) => {
       // const books = Book.find({});
       // if (books.find((book) => book.title === args.title)) {
       //   throw new UserInputError('Title must be unique', {
@@ -188,29 +193,29 @@ const resolvers = {
       // if (!existingAuthor) {
       //   authors = authors.concat({ name: args.author, id: uuid() });
       // }
+      const author = await Author.findOne({ name: args.author });
+      if (!author) {
+        const newAuthor = new Author({ name: args.author });
+        newAuthor.save();
+      }
       console.log('saving book');
       const book = new Book({ ...args });
       return book.save();
-
-      // const book = { ...args, id: uuid() };
-      // books = books.concat(book);
-      // return book;
     },
     addAuthor: async (root, args) => {
-      const author = new Author({...args})
+      const author = new Author({ ...args });
       return author.save();
     },
-    editAuthor: (root, args) => {
-      const author = authors.find((author) => args.name === author.name);
+    editAuthor: async (root, args) => {
+      const author = Author.findOneAndUpdate(
+        { name: args.name },
+        { born: args.setBornTo },
+        { new: true }
+      );
       if (!author) {
         return null;
       }
-      const savedAuthor = { ...author, born: args.setBornTo };
-      authors = [
-        ...authors.filter((author) => author.name !== args.name),
-        savedAuthor,
-      ];
-      return savedAuthor;
+      return author;
     },
   },
 };
