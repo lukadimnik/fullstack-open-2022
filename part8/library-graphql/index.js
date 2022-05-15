@@ -152,19 +152,19 @@ const resolvers = {
       return authors.length;
     },
     allBooks: async (root, args) => {
-      console.log('executed');
-      // if (args.author && args.genre) {
-      //   return books
-      //     .filter((book) => book.author === args.author)
-      //     .filter((book) => book.genres.includes(args.genre));
-      // }
-      // if (args.author) {
-      //   return books.filter((book) => book.author === args.author);
-      // }
-      // if (args.genre) {
-      //   return books.filter((book) => book.genres.includes(args.genre));
-      // }
       const books = await Book.find({});
+      if (args.author && args.genre) {
+        return books
+          .filter((book) => book.author === args.author)
+          .filter((book) => book.genres.includes(args.genre));
+      }
+      if (args.author) {
+        return books.filter((book) => book.author === args.author);
+      }
+      if (args.genre) {
+        return books.filter((book) => book.genres.includes(args.genre));
+      }
+
       return books;
     },
     allAuthors: async () => {
@@ -180,38 +180,51 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
-      // const books = Book.find({});
-      // if (books.find((book) => book.title === args.title)) {
-      //   throw new UserInputError('Title must be unique', {
-      //     invalidArgs: args.title,
-      //   });
-      // }
-      // const authors = Author.find({});
-      // const existingAuthor = authors.find(
-      //   (author) => author.name === args.author
-      // );
-      // if (!existingAuthor) {
-      //   authors = authors.concat({ name: args.author, id: uuid() });
-      // }
+      const doesTitleExist = await Book.find({ title: args.title });
+      if (doesTitleExist.length) {
+        throw new UserInputError('Title must be unique', {
+          invalidArgs: args.title,
+        });
+      }
       const author = await Author.findOne({ name: args.author });
       if (!author) {
         const newAuthor = new Author({ name: args.author });
         newAuthor.save();
       }
-      console.log('saving book');
       const book = new Book({ ...args });
-      return book.save();
+      try {
+        await book.save();
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        });
+      }
+      return book;
     },
     addAuthor: async (root, args) => {
       const author = new Author({ ...args });
-      return author.save();
+      try {
+        await author.save();
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        });
+      }
+      return author;
     },
     editAuthor: async (root, args) => {
-      const author = Author.findOneAndUpdate(
-        { name: args.name },
-        { born: args.setBornTo },
-        { new: true }
-      );
+      let author;
+      try {
+        author = Author.findOneAndUpdate(
+          { name: args.name },
+          { born: args.setBornTo },
+          { new: true }
+        );
+      } catch (error) {
+        throw new UserInputError(error.message, {
+          invalidArgs: args,
+        });
+      }
       if (!author) {
         return null;
       }
