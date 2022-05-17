@@ -130,7 +130,7 @@ const typeDefs = gql`
     title: String!
     published: Int!
     author: Author!
-    genres: [String!]!
+    genres: [String!]
     id: ID!
   }
 
@@ -158,9 +158,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    me: (root, args, context) => {
-      return context.currentUser;
-    },
+    me: (root, args, context) => context.currentUser,
     bookCount: async () => {
       const books = await Book.find({});
       return books.length;
@@ -170,7 +168,7 @@ const resolvers = {
       return authors.length;
     },
     allBooks: async (root, args) => {
-      const books = await Book.find({});
+      const books = await Book.find({}).populate('author');
       if (args.author && args.genre) {
         return books
           .filter((book) => book.author === args.author)
@@ -192,12 +190,13 @@ const resolvers = {
   },
   Author: {
     bookCount: async (root) => {
-      const books = await Book.find({ author: root.name });
+      const books = await Book.find({ author: root._id });
       return books.length;
     },
   },
   Mutation: {
     addBook: async (root, args, { currentUser }) => {
+      let author;
       if (!currentUser) {
         throw new AuthenticationError('not authenticated');
       }
@@ -207,12 +206,15 @@ const resolvers = {
           invalidArgs: args.title,
         });
       }
-      const author = await Author.findOne({ name: args.author });
-      if (!author) {
-        const newAuthor = new Author({ name: args.author });
-        newAuthor.save();
+      const existingAuthor = await Author.findOne({ name: args.author });
+
+      if (!existingAuthor) {
+        author = new Author({ name: args.author });
+        author.save();
+      } else {
+        author = existingAuthor;
       }
-      const book = new Book({ ...args });
+      const book = new Book({ ...args, author });
       try {
         await book.save();
       } catch (error) {

@@ -8,8 +8,8 @@ const schema = new mongoose.Schema({
     minlength: 2,
   },
   author: {
-    type: String,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Author'
   },
   published: {
     type: Number,
