@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ALL_BOOKS } from '../Queries';
 
 const Books = (props) => {
-  const [selectedGenre, setSelectedGenre] = useState(null);
+  const [selectedGenre, setSelectedGenre] = useState('all genres');
   const result = useQuery(ALL_BOOKS);
   if (!props.show) {
     return null;
