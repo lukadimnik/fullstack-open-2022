@@ -4,7 +4,11 @@ import { ALL_BOOKS } from '../Queries';
 
 const Books = (props) => {
   const [selectedGenre, setSelectedGenre] = useState('all genres');
-  const result = useQuery(ALL_BOOKS);
+  const result = useQuery(ALL_BOOKS, {
+    variables: {
+      genre: selectedGenre === 'all genres' ? '' : selectedGenre,
+    },
+  });
   if (!props.show) {
     return null;
   }
