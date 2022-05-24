@@ -8,6 +8,7 @@ const Books = (props) => {
     variables: {
       genre: selectedGenre === 'all genres' ? '' : selectedGenre,
     },
+    fetchPolicy: 'no-cache'
   });
   if (!props.show) {
     return null;
