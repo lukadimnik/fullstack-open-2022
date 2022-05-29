@@ -10,6 +10,11 @@ const Authors = (props) => {
   if (result.loading) {
     return <p>Loading authors...</p>;
   }
+
+  if (!result.data.allAuthors.length) {
+    return <p>No authors in the database</p>;
+  }
+
   const authors = result.data.allAuthors;
 
   return (
@@ -32,7 +37,7 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
-      <br/>
+      <br />
       <BirthYearForm authors={authors} />
     </div>
   );

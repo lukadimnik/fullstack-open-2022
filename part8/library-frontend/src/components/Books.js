@@ -1,21 +1,48 @@
-import { useQuery } from '@apollo/client';
+import { useQuery, useSubscription, useApolloClient } from '@apollo/client';
 import { useState } from 'react';
-import { ALL_BOOKS } from '../Queries';
+import { ALL_BOOKS, BOOK_ADDED } from '../Queries';
+import { updateCache } from '../utils';
 
 const Books = (props) => {
+  const client = useApolloClient();
   const [selectedGenre, setSelectedGenre] = useState('all genres');
+
   const result = useQuery(ALL_BOOKS, {
     variables: {
       genre: selectedGenre === 'all genres' ? '' : selectedGenre,
     },
-    fetchPolicy: 'no-cache'
   });
+
+  useSubscription(BOOK_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      console.log(subscriptionData);
+      window.alert('New book was just added!');
+      const addedBook = subscriptionData.data.bookAdded;
+      updateCache(
+        client.cache,
+        {
+          query: ALL_BOOKS,
+        },
+        addedBook
+      );
+      result.refetch(ALL_BOOKS, {
+        variables: {
+          genre: selectedGenre,
+        },
+      });
+    },
+  });
+
   if (!props.show) {
     return null;
   }
 
   if (result.loading) {
     return <p>Loading books...</p>;
+  }
+
+  if (!result.data.allBooks.length) {
+    return <p>No books in the database</p>;
   }
 
   const books = result.data.allBooks;
