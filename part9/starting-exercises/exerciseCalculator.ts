@@ -29,7 +29,7 @@ const parseArguments = (args: Array<string>): ExerciseValues => {
   throw new Error('Provided values were not numbers!');
 };
 
-const calculateExercises = (
+export const calculateExercises = (
   dailyExcHours: number[],
   target: number
 ): ExerciseResults => {
@@ -40,7 +40,7 @@ const calculateExercises = (
   const success = average >= target;
   const targetDiff = target - average;
 
-  let rating;
+  let rating: 1 | 2 | 3;
   if (targetDiff <= 0) {
     rating = 1;
   } else if (targetDiff > 0 && targetDiff <= 1) {

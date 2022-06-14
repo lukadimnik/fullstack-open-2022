@@ -17,7 +17,7 @@ const parseArguments = (args: Array<string>): BmiValues => {
   throw new Error('Provided values were not numbers!');
 };
 
-const calculateBmi = (height, weight) => {
+export const calculateBmi = (height: number, weight: number) => {
   const bmi = weight / Math.pow(height / 100, 2);
   if (bmi < 16) {
     return 'Underweight (Severe thinness)';
