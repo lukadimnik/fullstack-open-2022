@@ -13,3 +13,9 @@ export interface Diagnose {
   name: string;
   latin?: string;
 }
+
+export interface PatientWithSsn extends Patient {
+  ssn: string;
+}
+
+export type NewPatientEntry = Omit<PatientWithSsn, 'id'>;

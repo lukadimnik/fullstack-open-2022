@@ -1,6 +1,6 @@
-import { Patient } from '../src/types';
+import { PatientWithSsn } from '../src/types';
 
-const patients: Array<Patient> = [
+const patients: Array<PatientWithSsn> = [
   {
     id: 'd2773336-f723-11e9-8f0b-362b9e155667',
     name: 'John McClane',
