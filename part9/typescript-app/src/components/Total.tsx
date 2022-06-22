@@ -1,7 +1,7 @@
-import { CourseParts } from '../App';
+import { CoursePartBase } from '../App';
 
 export interface TotalProps {
-    courseParts: CourseParts;
+    courseParts: CoursePartBase[];
 }
 
 const Total = ({ courseParts }: TotalProps) => {
