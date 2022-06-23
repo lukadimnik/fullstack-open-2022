@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { v1 as uuid } from 'uuid';
 import patientsData from '../../data/patients';
-import { NewPatientEntry, Patient, PatientWithSsn } from '../types';
+import { NewPatientEntry, Patient, PublicPatient } from '../types';
 
-const getPatients = (): Array<Patient> => {
+const getPatients = (): Array<PublicPatient> => {
   return patientsData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
@@ -13,7 +13,7 @@ const getPatients = (): Array<Patient> => {
   }));
 };
 
-const addPatients = (entry: NewPatientEntry): PatientWithSsn => {
+const addPatients = (entry: NewPatientEntry): PublicPatient => {
   const { name, dateOfBirth, gender, occupation, ssn } = entry;
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   const id: string = uuid();
@@ -24,6 +24,7 @@ const addPatients = (entry: NewPatientEntry): PatientWithSsn => {
     gender,
     occupation,
     ssn,
+    entries: [],
   };
 
   patientsData.push(newPatient);
