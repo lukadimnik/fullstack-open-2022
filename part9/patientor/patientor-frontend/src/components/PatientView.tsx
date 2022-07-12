@@ -8,7 +8,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 
 const PatientView = () => {
   const id = useParams<{ id: string }>().id;
-  const [{ patients }, dispatch] = useStateValue();
+  const [{ patients, diagnoses }, dispatch] = useStateValue();
 
   if (!id) {
     return <p>Cant parse id</p>;
@@ -36,7 +36,7 @@ const PatientView = () => {
         <p>{entry.date}: {entry.description}</p>
         <ul>
           {entry?.diagnosisCodes && entry.diagnosisCodes.map((code, i) => <li key={i}>
-            {code}
+            {code} {diagnoses[code].name}
           </li>)}
         </ul>
       </div>;
