@@ -15,11 +15,13 @@ const isGender = (param: any): param is Gender => {
 };
 
 const isEntry = (entry: any): entry is Entry => {
-  if(!(entry === Object(entry)) || !('type' in entry)){
+  if (!(entry === Object(entry)) || !('type' in entry)) {
     return false;
   }
-  const entryCheck = {...entry} as Entry;
-  return ['Hospital', 'OccupationalHealthcare', 'HealthCheck'].includes(entryCheck.type);
+  const entryCheck = { ...entry } as Entry;
+  return ['Hospital', 'OccupationalHealthcare', 'HealthCheck'].includes(
+    entryCheck.type
+  );
 };
 
 const parseName = (name: unknown): string => {
@@ -59,7 +61,11 @@ const parseGender = (gender: unknown): Gender => {
 };
 
 const parseEntries = (entries: unknown): Entry[] => {
-  if (!entries || !Array.isArray(entries) || !entries.every(entry => isEntry(entry))) {
+  if (
+    !entries ||
+    !Array.isArray(entries) ||
+    !entries.every((entry) => isEntry(entry))
+  ) {
     throw new Error('Incorrect or missing entries field');
   }
   return entries as Entry[];

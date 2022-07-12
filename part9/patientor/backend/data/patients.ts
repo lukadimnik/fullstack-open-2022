@@ -7,7 +7,7 @@ const patients: Patient[] = [
     name: 'John McClane',
     dateOfBirth: '1986-07-09',
     ssn: '090786-122X',
-    gender: Gender.Male,//Gender.Male,
+    gender: Gender.Male,
     occupation: 'New york city cop',
     entries: [
       {
@@ -116,7 +116,6 @@ const patients: Patient[] = [
 const patientEntries: Patient[] = patients.map((obj) => {
   const object = toNewPatientEntry(obj) as Patient;
   object.id = obj.id;
-  // object.entries = [];
   return object;
 });
 
