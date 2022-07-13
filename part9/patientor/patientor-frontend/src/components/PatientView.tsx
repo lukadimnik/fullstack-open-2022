@@ -5,10 +5,11 @@ import { updatePatient, useStateValue } from '../state';
 import { Patient } from '../types';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
+import EntryView from './EntryView';
 
 const PatientView = () => {
   const id = useParams<{ id: string }>().id;
-  const [{ patients, diagnoses }, dispatch] = useStateValue();
+  const [{ patients }, dispatch] = useStateValue();
 
   if (!id) {
     return <p>Cant parse id</p>;
@@ -31,16 +32,7 @@ const PatientView = () => {
   }
 
   const renderEntries = () => {
-    return patient.entries.map((entry, i) => {
-      return <div key={i}>
-        <p>{entry.date}: {entry.description}</p>
-        <ul>
-          {entry?.diagnosisCodes && entry.diagnosisCodes.map((code, i) => <li key={i}>
-            {code} {diagnoses[code].name}
-          </li>)}
-        </ul>
-      </div>;
-    });
+    return patient.entries.map((entry, i) => <EntryView key={i} entry={entry} />);
   };
 
   return <>
