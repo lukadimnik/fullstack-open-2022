@@ -7,7 +7,7 @@ import {
   TextField as TextFieldMUI,
   Typography,
 } from "@material-ui/core";
-import { Diagnosis, Gender } from "../types";
+import { Diagnosis, Gender, HealthCheckRating } from "../types";
 import { InputLabel } from "@material-ui/core";
 import Input from '@material-ui/core/Input';
 
@@ -17,12 +17,24 @@ export type GenderOption = {
   label: string;
 };
 
+export type TypeOption = {
+  value: 'HealthCheck' | 'Hospital' | 'OccupationalHealthcare';
+  label: string;
+};
+
+export type HealthCheckRatingOption = {
+  value: HealthCheckRating;
+  label: string;
+};
+
+export type Option = GenderOption | TypeOption | HealthCheckRatingOption;
+
 // props for select field component
-type SelectFieldProps = {
+interface SelectFieldProps {
   name: string;
   label: string;
-  options: GenderOption[];
-};
+  options: Option[];
+}
 
 const FormikSelect = ({ field, ...props }: FieldProps) => <Select {...field} {...props} />;
 
