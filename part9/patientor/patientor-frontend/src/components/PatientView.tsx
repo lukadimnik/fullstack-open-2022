@@ -9,6 +9,7 @@ import EntryView from './EntryView';
 import AddEntryForm from './AddEntryForm';
 import { EntryFormValues } from '../AddPatientModal/AddPatientForm';
 import { apiBaseUrl } from '../constants';
+import { Alert } from '@material-ui/lab';
 
 const PatientView = () => {
   const id = useParams<{ id: string }>().id;
@@ -39,23 +40,6 @@ const PatientView = () => {
     return patient.entries.map((entry, i) => <EntryView key={i} entry={entry} />);
   };
 
-  // const submitNewEntry = (values: EntryFormValues) => {
-  //  axios.post<Entry>(`${apiBaseUrl}/patients/${id}/entries`, values).then((data)=>{
-  //   console.log('data',data);
-  //   //  dispatch(addEntry({
-  //   //    patientId: id,
-  //   //    entry: data
-  //   //  }));
-  //  }).catch((error)=>{
-  //    if (axios.isAxiosError(error)) {
-  //      console.error(error?.response?.data || 'Unrecognized axios error');
-  //      setError(String(error?.response?.data?.error) || "Unrecognized axios error");
-  //    } else {
-  //      console.error('Unknown error', error);
-  //      setError('Unknown error');
-  //    }
-  //  });
-  // };
   const submitNewEntry = async (values: EntryFormValues) => {
     try {
       const { data: newEntry } = await axios.post<Entry>(`${apiBaseUrl}/patients/${id}/entries`, values);
@@ -66,7 +50,7 @@ const PatientView = () => {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error(error?.response?.data || 'Unrecognized axios error');
-        setError(String(error?.response?.data?.error) || "Unrecognized axios error");
+        setError(String(error?.response?.data) || "Unrecognized axios error");
       } else {
         console.error('Unknown error', error);
         setError('Unknown error');
@@ -80,10 +64,11 @@ const PatientView = () => {
     {patient?.ssn && <p>SSN: {patient.ssn}</p>}
     <h3>Entries</h3>
     {patient.entries && renderEntries()}
+    {error && <Alert severity="error">{`Error: ${error}`}</Alert>}
     <AddEntryForm onCancel={() => console.log('cancel')}
       onSubmit={submitNewEntry}
     />
-    {error && <p>{error}</p>}
+    <br />
   </>;
 };
 
