@@ -57,7 +57,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
       }}
     >
       {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
-
+        console.log(isValid);
         return (
           <Form className="form ui">
             <Field label='Description'
