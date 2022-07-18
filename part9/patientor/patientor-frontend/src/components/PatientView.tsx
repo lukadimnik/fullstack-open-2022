@@ -2,19 +2,20 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { addEntry, updatePatient, useStateValue } from '../state';
-import { Entry, Patient } from '../types';
+import { Entry, Patient, EntryFormValues } from '../types';
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import EntryView from './EntryView';
-import AddEntryForm from './AddEntryForm';
-import { EntryFormValues } from '../AddPatientModal/AddPatientForm';
+import HealthCheckForm from './HealthCheckForm';
 import { apiBaseUrl } from '../constants';
 import { Alert } from '@material-ui/lab';
+import HospitalForm from './HospitalForm';
 
 const PatientView = () => {
   const id = useParams<{ id: string }>().id;
   const [{ patients }, dispatch] = useStateValue();
   const [error, setError] = useState<string>();
+  const [formType, setFormType] = useState<string>('');
 
   if (!id) {
     return <p>Cant parse id</p>;
@@ -58,6 +59,25 @@ const PatientView = () => {
     }
   };
 
+  const renderForm = () => {
+    switch (formType) {
+      case 'Hospital':
+        return <HospitalForm onCancel={() => console.log('cancel')}
+        onSubmit={submitNewEntry}
+      />;
+      case 'HealthCheck':
+        return <HealthCheckForm onCancel={() => console.log('cancel')}
+        onSubmit={submitNewEntry}
+      />;
+      case 'OccupationalHealthcare':
+        return <HospitalForm onCancel={() => console.log('cancel')}
+        onSubmit={submitNewEntry}
+      />;
+      default:
+        return null;
+    }
+  };
+
   return <>
     <h2>{patient.name} {patient.gender === 'male' ? <MaleIcon /> : <FemaleIcon />}</h2>
     <p>Occupation: {patient.occupation}</p>
@@ -65,9 +85,11 @@ const PatientView = () => {
     <h3>Entries</h3>
     {patient.entries && renderEntries()}
     {error && <Alert severity="error">{`Error: ${error}`}</Alert>}
-    <AddEntryForm onCancel={() => console.log('cancel')}
-      onSubmit={submitNewEntry}
-    />
+    <button onClick={() => setFormType('Hospital')}>Hospital</button>
+    <button onClick={() => setFormType('HealthCheck')}>Health Check</button>
+    <button onClick={() => setFormType('OccupationalHealthcare')}>Occupational Healthcare</button>
+    <button onClick={() => setFormType('')}>Close Form</button>
+    {renderForm()}
     <br />
   </>;
 };
