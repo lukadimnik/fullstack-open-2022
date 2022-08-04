@@ -10,6 +10,7 @@ import HealthCheckForm from './HealthCheckForm';
 import { apiBaseUrl } from '../constants';
 import { Alert } from '@material-ui/lab';
 import HospitalForm from './HospitalForm';
+import OccupationalHealthcareForm from './OccupationalHealthcareForm';
 
 const PatientView = () => {
   const id = useParams<{ id: string }>().id;
@@ -63,16 +64,16 @@ const PatientView = () => {
     switch (formType) {
       case 'Hospital':
         return <HospitalForm onCancel={() => console.log('cancel')}
-        onSubmit={submitNewEntry}
-      />;
+          onSubmit={submitNewEntry}
+        />;
       case 'HealthCheck':
         return <HealthCheckForm onCancel={() => console.log('cancel')}
-        onSubmit={submitNewEntry}
-      />;
+          onSubmit={submitNewEntry}
+        />;
       case 'OccupationalHealthcare':
-        return <HospitalForm onCancel={() => console.log('cancel')}
-        onSubmit={submitNewEntry}
-      />;
+        return <OccupationalHealthcareForm onCancel={() => console.log('cancel')}
+          onSubmit={submitNewEntry}
+        />;
       default:
         return null;
     }

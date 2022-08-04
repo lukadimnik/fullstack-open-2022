@@ -1,24 +1,17 @@
 import { Button, Grid } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
-import { DiagnosisSelection, HealthCheckRatingOption, SelectField, TextField } from '../AddPatientModal/FormField';
+import { DiagnosisSelection, TextField } from '../AddPatientModal/FormField';
 import { useStateValue } from '../state';
-import { HealthCheckEntry, HealthCheckRating } from '../types';
+import { OccupationalHealthcareEntry } from '../types';
 
-export type EntryFormValues = Omit<HealthCheckEntry, "id">;
+export type EntryFormValues = Omit<OccupationalHealthcareEntry, "id">;
 
 interface Props {
   onSubmit: (values: EntryFormValues) => void;
   onCancel: () => void;
 }
 
-const healthCheckRatingOptions: HealthCheckRatingOption[] = [
-  { value: HealthCheckRating.Healthy, label: 'Healthy' },
-  { value: HealthCheckRating.LowRisk, label: 'LowRisk' },
-  { value: HealthCheckRating.HighRisk, label: 'HighRisk' },
-  { value: HealthCheckRating.CriticalRisk, label: 'CriticalRisk' },
-];
-
-const HealthCheckForm = ({ onSubmit, onCancel }: Props) => {
+const OccupationalHealthcareForm = ({ onSubmit, onCancel }: Props) => {
   const [{ diagnoses }] = useStateValue();
 
   return (
@@ -27,9 +20,13 @@ const HealthCheckForm = ({ onSubmit, onCancel }: Props) => {
         description: '',
         date: '',
         specialist: '',
-        type: 'HealthCheck',
-        healthCheckRating: HealthCheckRating.CriticalRisk,
-        diagnosisCodes: []
+        type: 'OccupationalHealthcare',
+        diagnosisCodes: [],
+        employerName: '',
+        sickLeave: {
+          startDate: '',
+          endDate: ''
+        }
       }}
       onSubmit={onSubmit}
       validate={(values) => {
@@ -47,7 +44,7 @@ const HealthCheckForm = ({ onSubmit, onCancel }: Props) => {
         if (!values.type) {
           errors.type = requiredError;
         }
-        if (!values.healthCheckRating) {
+        if (!values.employerName) {
           errors.type = requiredError;
         }
         return errors;
@@ -71,10 +68,21 @@ const HealthCheckForm = ({ onSubmit, onCancel }: Props) => {
               name='specialist'
               component={TextField}
             />
-            <SelectField
-              label='HealthCheckRating'
-              name='healthCheckRating'
-              options={healthCheckRatingOptions}
+            <Field label='Employer Name'
+              placeholder='Employer Name'
+              name='employerName'
+              component={TextField}
+            />
+            <h4>Optional sick leave data</h4>
+            <Field label='Sick leave start date'
+              placeholder='Sick leave start date'
+              name='sickLeave.startDate'
+              component={TextField}
+            />
+            <Field label='Sick leave end date'
+              placeholder='Sick leave end date'
+              name='sickLeave.endDate'
+              component={TextField}
             />
             <DiagnosisSelection
               setFieldValue={setFieldValue}
@@ -109,4 +117,4 @@ const HealthCheckForm = ({ onSubmit, onCancel }: Props) => {
   );
 };
 
-export default HealthCheckForm;
+export default OccupationalHealthcareForm;

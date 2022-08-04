@@ -1,6 +1,6 @@
 import { Button, Grid } from '@material-ui/core';
 import { Field, Form, Formik } from 'formik';
-import { DiagnosisSelection, SelectField, TextField, TypeOption } from '../AddPatientModal/FormField';
+import { DiagnosisSelection, TextField } from '../AddPatientModal/FormField';
 import { useStateValue } from '../state';
 import { HospitalEntry } from '../types';
 
@@ -10,12 +10,6 @@ interface Props {
   onSubmit: (values: EntryFormValues) => void;
   onCancel: () => void;
 }
-
-const typeOptions: TypeOption[] = [
-  { value: 'HealthCheck', label: 'HealthCheck' },
-  { value: 'Hospital', label: 'Hospital' },
-  { value: 'OccupationalHealthcare', label: 'OccupationalHealthcare' },
-];
 
 const HospitalForm = ({ onSubmit, onCancel }: Props) => {
   const [{ diagnoses }] = useStateValue();
@@ -29,8 +23,8 @@ const HospitalForm = ({ onSubmit, onCancel }: Props) => {
         type: 'Hospital',
         diagnosisCodes: [],
         discharge: {
-            criteria: '',
-            date: ''
+          criteria: '',
+          date: ''
         }
       }}
       onSubmit={onSubmit}
@@ -49,12 +43,16 @@ const HospitalForm = ({ onSubmit, onCancel }: Props) => {
         if (!values.type) {
           errors.type = requiredError;
         }
+        if (!values.discharge.criteria) {
+          errors.type = requiredError;
+        }
+        if (!values.discharge.date) {
+          errors.type = requiredError;
+        }
         return errors;
       }}
     >
-      {({ isValid, dirty, setFieldValue, setFieldTouched, values }) => {
-        console.log(isValid);
-        console.log('values', values);
+      {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
         return (
           <Form className="form ui">
             <Field label='Description'
@@ -71,11 +69,6 @@ const HospitalForm = ({ onSubmit, onCancel }: Props) => {
               placeholder='Specialist'
               name='specialist'
               component={TextField}
-            />
-            <SelectField
-              label='Type'
-              name='type'
-              options={typeOptions}
             />
             <Field label='Discharge criteria'
               placeholder='Criteria'
@@ -113,7 +106,6 @@ const HospitalForm = ({ onSubmit, onCancel }: Props) => {
                 </Button>
               </Grid>
             </Grid>
-
           </Form>
         );
       }}
