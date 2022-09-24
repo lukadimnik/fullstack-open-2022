@@ -1,0 +1,4 @@
+docker start -i dazzling_saha
+apt-get update
+apt-get -y install nodejs
+node /usr/src/app/index.js
