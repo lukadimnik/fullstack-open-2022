@@ -1,0 +1,4 @@
+docker start -i dazzling_saha
+apt-get update
+apt-get -y install vim
+vim /usr/src/app/index.js
